@@ -13,12 +13,16 @@ if (count($_POST) > 0) {
     if ($_POST['password'] !== $_POST['passwordRepeat']){
         die("Validated password does not match");
     }
-    
+    $uniqueId = mt_rand() . time();
+
     // If all checks pass, proceed to save the user data
     $userData = [
         'name' => $_POST['userName'],
         'email' => $_POST['email'],
-        'password' => password_hash($_POST['password'], PASSWORD_BCRYPT)
+        'password' => password_hash($_POST['password'], PASSWORD_BCRYPT),
+        'bio' => '',
+        'userProfileImage'=>'',
+        'AlbumID'=> $uniqueId
     ];
     var_dump($userData);
     $filePath=__DIR__ .'/data/users.json';
