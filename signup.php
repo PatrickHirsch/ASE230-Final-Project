@@ -22,16 +22,19 @@ if (count($_POST) > 0) {
     ];
     var_dump($userData);
     $filePath=__DIR__ .'/data/users.json';
-    var_dump($filePath);
+    //var_dump($filePath);
     // Read existing users from users.json, if it exists
     $users = [];
     if (file_exists($filePath)) {
         $users = json_decode(file_get_contents($filePath), true);
-        echo "path exist";
+        //echo "path exist";
         // Check if the email already exists in the users.json file
         foreach ($users as $user) {
             if ($user['email'] === $_POST['email']) {
                 die('An account with this email already exists.');
+            }
+            if ($user['name']=== $_POST['userName']){
+                die('That username is already in use. Please select another');
             }
         }
 
@@ -39,9 +42,11 @@ if (count($_POST) > 0) {
         $users[] = $userData;
 
         // Save the updated users array back to users.json
-        file_put_contents($filePath, json_encode($users));
+        file_put_contents($filePath, json_encode($users,JSON_PRETTY_PRINT));
 
         // Optionally, you can redirect the user to a success page
+        session_start(); // Start the session if not already started
+        $_SESSION['success_message'] = 'Your account has been successfully created. Please login.';
         header('Location: login.php');
     }
 } else {
@@ -77,7 +82,7 @@ if (count($_POST) > 0) {
                                         <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                                         <div class="form-outline flex-fill mb-0">
                                             <input type="text" id="nameInput" name="userName" class="form-control" />
-                                            <label class="form-label" for="nameInput">Your Name</label>
+                                            <label class="form-label" for="nameInput">Your Username</label>
                                         </div>
                                     </div>
 

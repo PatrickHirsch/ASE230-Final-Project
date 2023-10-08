@@ -1,7 +1,12 @@
 [
     {
-        "name": "kadhjfl",
-        "email": "jdwernke@gmail.com",
-        "password": "$2y$10$RccUbF7o5a81ri\/2J6wGpuxP8STk.TWkSzrKPnlqRUB3mu6uFcHmi"
+        "name": "Sarah",
+        "email": "rileys14@mymail.nku.edu",
+        "password": "$2y$10$unN7upo1zFpCfxlSZmbUEuT9zRNIFCL7YRNEgfj0P.SlFV18P9\/X6"
+    },
+    {
+        "name": "Host",
+        "email": "Host@gmail.com",
+        "password": "$2y$10$scn2LD\/E\/S7I1ICORxUBMezrlgYnuhM6oF25U\/D3HqCyYphgTJkvC"
     }
 ]
