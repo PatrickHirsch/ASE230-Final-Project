@@ -17,12 +17,15 @@ if (count($_POST) > 0) {
 
     // If all checks pass, proceed to save the user data
     $userData = [
+        'ID' => $uniqueId,
         'name' => $_POST['userName'],
         'email' => $_POST['email'],
         'password' => password_hash($_POST['password'], PASSWORD_BCRYPT),
+        'dateJoined' => time(),
         'bio' => '',
         'userProfileImage'=>'',
-        'AlbumID'=> $uniqueId
+        'AlbumID'=> $uniqueId,
+        'status' => '1'
     ];
     var_dump($userData);
     $filePath=__DIR__ .'/data/users.json';
