@@ -50,43 +50,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body>
-    <form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
-        <!-- Email input -->
-        <div class="form-outline mb-4">
-            <input type="email" id="form2Example1" name='email'class="form-control" />
-            <label class="form-label" for="form2Example1">Email address</label>
-        </div>
+    <section class="vh-100" style="background-color: #eee;">
+        <div class="container h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-lg-12 col-xl-11">
+                    <div class="card text-black" style="border-radius: 25px;">
+                        <div class="card-body p-md-5">
+                            <div class="row justify-content-center">
+                                <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
+                                    <form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
+                                        <!-- Email input -->
+                                        <div class="form-outline mb-4">
+                                            <input type="email" id="form2Example1" name='email' class="form-control" />
+                                            <label class="form-label" for="form2Example1">Email address</label>
+                                        </div>
 
-        <!-- Password input -->
-        <div class="form-outline mb-4">
-            <input type="password" id="form2Example2" name='password'class="form-control" />
-            <label class="form-label" for="form2Example2">Password</label>
-        </div>
+                                        <!-- Password input -->
+                                        <div class="form-outline mb-4">
+                                            <input type="password" id="form2Example2" name='password'
+                                                class="form-control" />
+                                            <label class="form-label" for="form2Example2">Password</label>
+                                        </div>
 
-        <!-- 2 column grid layout for inline styling -->
-        <div class="row mb-4">
-            <div class="col d-flex justify-content-center">
-                <!-- Checkbox -->
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="" id="form2Example31" checked />
-                    <label class="form-check-label" for="form2Example31"> Remember me </label>
+                                        <!-- 2 column grid layout for inline styling -->
+                                        <div class="row mb-4">
+                                            <div class="col d-flex justify-content-center">
+                                                <!-- Checkbox 
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" value=""
+                                                        id="form2Example31" checked />
+                                                    <label class="form-check-label" for="form2Example31"> Remember me
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div class="col">-->
+                                                <!-- Simple link -->
+                                                <a href="#!">Forgot password?</a>
+                                            </div>
+                                        </div>
+
+                                        <!-- Submit button -->
+                                        <button type="submit" class="btn btn-primary btn-block mb-4">Sign in</button>
+
+                                        <!-- Register buttons -->
+                                        <div class="text-center">
+                                            <p>Not a member? <a href="signup.php">Register</a></p>
+                                        </div>
+                                    </form>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <div class="col">
-                <!-- Simple link -->
-                <a href="#!">Forgot password?</a>
-            </div>
         </div>
-
-        <!-- Submit button -->
-        <button type="submit" class="btn btn-primary btn-block mb-4">Sign in</button>
-
-        <!-- Register buttons -->
-        <div class="text-center">
-            <p>Not a member? <a href="signup.php">Register</a></p>
         </div>
-    </form>
+    </section>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
