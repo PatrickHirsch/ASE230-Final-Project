@@ -16,8 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['email']) && isset($_POST['password'])) {
         $email = $_POST['email'];
         $password = $_POST['password'];
-        var_dump($email);
-        var_dump($password);
+        //var_dump($email);
+        //var_dump($password);
         // Read the user data from the JSON file
         $userData = json_decode(file_get_contents('data/users.json'), true);
 
@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // If no matching user is found, display an error message
-        $loginError = 'Invalid email or password. Please try again.';
+        echo 'Invalid email or password. Please try again or Create an account';
     }
 }
 
