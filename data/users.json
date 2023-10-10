@@ -9,5 +9,16 @@
         "userProfileImage": "",
         "AlbumID": "1279394321696948849",
         "status": "3"
+    },
+    {
+        "ID": "10341429351696952687",
+        "name": "TestUser",
+        "email": "testUser@gmail.com",
+        "password": "$2y$10$iAbcjV6pktbwlDuEQUVvgem9ZwdRr03v70ZhzP877ehlsCwuCS1lW",
+        "dateJoined": 1696952687,
+        "bio": "",
+        "userProfileImage": "",
+        "AlbumID": "10341429351696952687",
+        "status": "1"
     }
 ]
