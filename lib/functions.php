@@ -1,5 +1,5 @@
 <?php
-//Generates user cards for index and admin page
+//Generates user cards for admin.php
 function generateAdminUserCards($userData)
 {
 
@@ -44,6 +44,7 @@ function generateAdminUserCards($userData)
 
 }
 
+//generates user cards for index.php
 Function generateUserCards($userData){
 
         foreach ($userData as $user) {
