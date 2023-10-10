@@ -1,16 +1,20 @@
 <?php
 //Generates user cards for admin.php
 
-function convertTimeStamp($user){
+function convertTimeStamp($user)
+{
     date_default_timezone_set('America/Kentucky/Louisville');
     $userTimeStamp = $user['dateJoined'];
     $formattedDateTime = date('Y-m-d H:i:s', $userTimeStamp);
     return $formattedDateTime;
 }
 
-function checkAdmin($userData){
+//function checkStatus($userData){
+ //   if (isset($_SESSION['user_id'])) {
 
-}
+
+//    }
+//}
 function generateAdminUserCards($userData)
 {
 
@@ -46,7 +50,6 @@ function generateAdminUserCards($userData)
                                 </div>
                             </div>
                             <!-- User actions-->
-                            <form method="POST" action="">
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
                                 <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="user.php?ID=' . $user['ID'] . '">Check out User</a></div>
                             </div>
@@ -78,11 +81,9 @@ function generateUserCards($userData)
                                     </div>
                                 </div>
                                 <!-- User actions-->
-                                <form method="POST" action="">
                                 <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
                                     <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="user.php?ID=' . $user['ID'] . '">Check out User</a></div>
                                 </div>
-                                </form>
                             </div>
                         </div>';
         }
