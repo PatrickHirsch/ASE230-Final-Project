@@ -27,6 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Store user data in the session
                 $_SESSION['email'] = $email;
                 $_SESSION['user_name'] = $user['name'];
+                $_SESSION['user_id']=$user['ID'];
+                $_SESSION['user_status']=$user['status'];
 
                 // Redirect to user.php
                 header('Location: user.php');

@@ -1,12 +1,13 @@
 [
     {
-        "name": "Sarah",
+        "ID": "1279394321696948849",
+        "name": "SarahRiley",
         "email": "rileys14@mymail.nku.edu",
-        "password": "$2y$10$unN7upo1zFpCfxlSZmbUEuT9zRNIFCL7YRNEgfj0P.SlFV18P9\/X6"
-    },
-    {
-        "name": "Host",
-        "email": "Host@gmail.com",
-        "password": "$2y$10$scn2LD\/E\/S7I1ICORxUBMezrlgYnuhM6oF25U\/D3HqCyYphgTJkvC"
+        "password": "$2y$10$74\/KWtwnj279pWXNmyt8mOV3qWITZrwt32KkvGMGYedJC4kTkLtn6",
+        "dateJoined": 1696948849,
+        "bio": "",
+        "userProfileImage": "",
+        "AlbumID": "1279394321696948849",
+        "status": "3"
     }
 ]

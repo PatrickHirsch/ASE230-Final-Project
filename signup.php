@@ -132,6 +132,10 @@ if (count($_POST) > 0) {
                                         <button type="submit" class="btn btn-primary btn-lg">Register</button>
                                     </div>
 
+                                    <div class="form-check d-flex justify-content-center mb-5">
+                                        <a href="login.php">Back to Login</a>
+</div>
+
                                 </form>
                             </div>
                             <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
