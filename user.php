@@ -27,7 +27,7 @@ $theseImages=getUsersPhotos($thisUser['ID']);
 	
 
 <hr>
-<?= generateAlbum(["",""]); ?>
+<?= generateUserAlbum($thisUser['ID']); ?>
 		
 <!-- pre><?= print_r($theseImages); ?></pre>
 <pre><?= print_r($thisUser); ?></pre>

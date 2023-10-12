@@ -21,7 +21,7 @@ else
 ?>
 <?= echoHeader($welcomeMessage,$homepageButtons) ?>
 		
-Gal!
+<?= generateAlbum() ?>
 		
 <?= echoFooter() ?>
 		

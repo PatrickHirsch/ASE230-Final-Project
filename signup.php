@@ -30,13 +30,13 @@ if (count($_POST) > 0) {
         'AlbumID'=> $uniqueId,
         'status' => '1'
     ];
-    var_dump($userData);
+    //var_dump($userData);
     $filePath=__DIR__ .'/data/users.json';
     //var_dump($filePath);
     // Read existing users from users.json, if it exists
     $users = [];
     if (file_exists($filePath)) {
-        $users = json_decode(file_get_contents($filePath), true);
+        $users = importJSON($filePath);
         //echo "path exist";
         // Check if the email already exists in the users.json file
         foreach ($users as $user) {
@@ -52,8 +52,8 @@ if (count($_POST) > 0) {
         $users[] = $userData;
 
         // Save the updated users array back to users.json
-        file_put_contents($filePath, json_encode($users,JSON_PRETTY_PRINT));
-
+		writeJSON($users,$filePath);
+		
         // Optionally, you can redirect the user to a success page
         session_start(); // Start the session if not already started
         $_SESSION['success_message'] = 'Your account has been successfully created. Please login.';

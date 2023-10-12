@@ -15,7 +15,8 @@ function writeJSON($newArray,$filePath)
 }
 
 
-function generateAlbum($imgIDs,$rootPath='.')
+
+function generateAlbum($rootPath='.')
 {	$imagesArray=importJSON($rootPath.'/data/images.json');
 	
 	$ret='
@@ -24,7 +25,7 @@ function generateAlbum($imgIDs,$rootPath='.')
             <div class="container px-4 px-lg-5 mt-5">
                 <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                     ';
-	foreach($imgIDs as $imgID) $ret=$ret.generateAlbumSquare($imgID,$rootPath,$imagesArray);
+	foreach($imagesArray as $img) $ret=$ret.generateAlbumSquare($img,$rootPath);
 	$ret=$ret.'
                 </div>
             </div>
@@ -33,25 +34,46 @@ function generateAlbum($imgIDs,$rootPath='.')
 	return $ret;
 }
 
-function generateAlbumSquare($img)
+function generateUserAlbum($userID,$rootPath='.')
+{	$imagesArray=importJSON($rootPath.'/data/images.json');
+	
+	$ret='
+        <!-- Section-->
+        <section class="py-5">
+            <div class="container px-4 px-lg-5 mt-5">
+                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                    ';
+	foreach($imagesArray as $img) 
+		if($img['owner']==$userID)
+			$ret=$ret.generateAlbumSquare($img,$rootPath);
+	
+	$ret=$ret.'
+                </div>
+            </div>
+        </section>
+	';
+	return $ret;
+}
+
+function generateAlbumSquare($img,$rootPath='.')
 {	$ret='
                     <div class="col mb-5">
                         <div class="card h-100">
                             <!-- Sale badge-->
                             <!-- div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div -->
                             <!-- Product image-->
-                            <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
+                            <img class="card-img-top" src="'.$rootPath.'/data/users/'.$img['owner'].'/'.$img['filename'].'" alt="..." />
                             <!-- Product details-->
                             <div class="card-body p-4">
                                 <div class="text-center">
                                     <!-- Product name-->
-                                    <h5 class="fw-bolder">{{IMG NAME}}</h5>
+                                    <h5 class="fw-bolder">'.$img['name'].'</h5>
                                     <!-- Product reviews-->
                                     <div class="d-flex justify-content-center small text-warning mb-2">';
-	for($star=1;$star<=5;$star++)	$ret=$ret.'<div class="bi-star-fill"></div>';
+	for($star=1;$star<=$img['rating'];$star++)	$ret=$ret.'<div class="bi-star-fill"></div>';
 	$ret=$ret.'</div>
                                     <!-- Product price-->
-                                    <span class="text-muted">{{OWNER}}</span>
+                                    <a class="text-muted" href="user.php?id='.$img['owner'].'">'.getUserName($img['owner']).'</a>
                                 </div>
                             </div>
                             <!-- Product actions-->
@@ -70,6 +92,10 @@ function getUserObject($lookup,$field='ID')
 		if($user[$field]==$lookup)
 			return $user;
 	return null;
+}
+
+function getUserName($userID)
+{	return getUserObject($userID)['name'];
 }
 
 function getImageObject($lookup,$field='ID')

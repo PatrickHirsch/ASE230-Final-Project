@@ -4,26 +4,12 @@ require_once 'header.php';
 require_once 'lib/functions.php';
 
 if($_SERVER['REQUEST_METHOD']==='POST')
-{	
-	$allUsers=importJSON('data/users.json');
+{	$allUsers=importJSON('data/users.json');
 	$authenticatedUser=$_SESSION['user_id'];
-	
-	//var_dump(count($_POST));
-	
-	//
-	
-			
-	
-	
-	
 	
 	for($i=0;$i<count($allUsers);$i++)
 	{	if($allUsers[$i]['ID']==$_SESSION['user_id'])
-		{	//echo '<pre>';
-			//var_dump($i);
-			//echo '</pre><hr>';
-			
-			// Simple validity check
+		{	// Simple validity check
 			if($allUsers[$i]['email']!=$_POST['email'])
 				echo die('Authentication fail.');
 			
@@ -44,83 +30,17 @@ if($_SERVER['REQUEST_METHOD']==='POST')
 			$allUsers[$i]['bio']=$_POST['bioName'];	
 		}
 	}
-	
-	//echo '<pre>';
-	//var_dump($allUsers);
-	//echo '</pre><hr>';
-	//die();
-	file_put_contents('data/users.json',json_encode($allUsers,JSON_PRETTY_PRINT));
+
+	writeJSON($allUsers,'data/users.json');
 	header("Location: user.php");
 }
 else
 {	if(isset($_SESSION['user_id'])) $thisUser=getUserObject($_SESSION['user_id']);
 	else header("Location: signup.php");
 }
-//	
-//	if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-//	
-//	if (count($_POST) > 0) {
-//	    //Checking for completeness
-//	    if (isset($_POST['userName'][0]) && isset($_POST['email'][0]) && isset($_POST['password'][0])){
-//	        if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)){
-//	            die("Please enter valid email");
-//	
-//	        }
-//	    }
-//	    if ($_POST['password'] !== $_POST['passwordRepeat']){
-//	        die("Validated password does not match");
-//	    }
-//	    $uniqueId = mt_rand() . time();
-//	
-//	    // If all checks pass, proceed to save the user data
-//	    $userData = [
-//	        'ID' => $uniqueId,
-//	        'name' => $_POST['userName'],
-//	        'email' => $_POST['email'],
-//   'password' => password_hash($_POST['password'], PASSWORD_BCRYPT),
-//	        'dateJoined' => time(),
-//	        'bio' => '',
-//	        'userProfileImage'=>'',
-//	        'AlbumID'=> $uniqueId,
-//	        'status' => '1'
-//	    ];
-//	    var_dump($userData);
-//	    $filePath=__DIR__ .'/data/users.json';
-//	    //var_dump($filePath);
-//	    // Read existing users from users.json, if it exists
-//	    $users = [];
-//	    if (file_exists($filePath)) {
-//	        $users = json_decode(file_get_contents($filePath), true);
-//	        //echo "path exist";
-//	        // Check if the email already exists in the users.json file
-//	        foreach ($users as $user) {
-//	            if ($user['email'] === $_POST['email']) {
-//	                die('An account with this email already exists.');
-//	            }
-//	            if ($user['name']=== $_POST['userName']){
-//	                die('That username is already in use. Please select another');
-//	            }
-//	        }
-//	
-//	        // Add the new user data to the existing users array
-//	        $users[] = $userData;
-//	
-//	        // Save the updated users array back to users.json
-//	        file_put_contents($filePath, json_encode($users,JSON_PRETTY_PRINT));
-//	
-//	        // Optionally, you can redirect the user to a success page
-//	        session_start(); // Start the session if not already started
-//	        $_SESSION['success_message'] = 'Your account has been successfully created. Please login.';
-//	        header('Location: login.php');
-//	    }
-//	} else {
-//	        echo 'Please fill all feilds for sign up.';
-//	}
-//	
-//	}
-//	
 ?>
-<?= echoHeader('Sign up') ?>
+
+<?= echoHeader('Edit User: ',$thisUser['name']) ?>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -159,20 +79,20 @@ else
                                         </div>
                                     </div>
 
+                                    <div class=" d-flex flex-row align-items-center mb-4">
+                                        <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                                        <div class="form-outline flex-fill mb-0">
+                                            <label class="form-label" for="bioInput">Bio</label>
+                                            <input type="text" id="bioInput" name="bioName" class="form-control" value="<?= $thisUser['bio'] ?>"/>
+                                        </div>
+                                    </div>
+
                                     <div class="d-flex flex-row align-items-center mb-4">
                                         <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
                                         <div class="form-outline flex-fill mb-0">
                                             <label class="form-label" for="passwordInput">New Password</label>
                                             <input type="password" id="passwordInput" name="password"
                                                 class="form-control" />
-                                        </div>
-                                    </div>
-
-                                    <div class=" d-flex flex-row align-items-center mb-4">
-                                        <i class="fas fa-user fa-lg me-3 fa-fw"></i>
-                                        <div class="form-outline flex-fill mb-0">
-                                            <label class="form-label" for="bioInput">Bio</label>
-                                            <input type="text" id="bioInput" name="bioName" class="form-control" value="<?= $thisUser['bio'] ?>"/>
                                         </div>
                                     </div>
 
@@ -186,29 +106,12 @@ else
                                         </div>
                                     </div>
 
-                                    <div class="form-check d-flex justify-content-center mb-5">
-                                        <input class="form-check-input me-2" type="checkbox" value=""
-                                            id="form2Example3c" />
-                                        <label class="form-check-label" for="form2Example3">
-                                            I agree all statements in <a href="#!">Terms of service</a>
-                                        </label>
-                                    </div>
-
                                     <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                                        <button type="submit" class="btn btn-primary btn-lg">Register</button>
+                                        <button type="submit" class="btn btn-primary btn-lg">Update</button>
                                     </div>
-
-                                    <div class="form-check d-flex justify-content-center mb-5">
-                                        <a href="login.php">Back to Login</a>
-</div>
 
                                 </form>
                             </div>
-<?php                            
-//	<div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
-//	<img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp" class="img-fluid" alt="Sample image">
-//	</div>
-?>
                         </div>
                     </div>
                 </div>

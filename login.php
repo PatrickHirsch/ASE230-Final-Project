@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         //var_dump($email);
         //var_dump($password);
         // Read the user data from the JSON file
-        $userData = json_decode(file_get_contents('data/users.json'), true);
+        $userData = importJSON('data/users.json');
 
         // Loop through user data to find a matching user
         foreach ($userData as $user) {
@@ -58,9 +58,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     foreach ($userData as &$user) {
                         if ($user['email'] === $restoredEmail && password_verify($restoredPassword, $user['password'])) {
                             $user['status']= "1";
-                            var_dump($user);
-                            file_put_contents('data/users.json', json_encode($userData, JSON_PRETTY_PRINT));
-                            var_dump($userData);
+                            //var_dump($user);
+                            writeJSON($userData,'data/users.json');
+							//var_dump($userData);
                             $_SESSION['success_message'] = "Your account has been restored. Please login.";
                         }
                     }
@@ -94,15 +94,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
                                         <!-- Email input -->
                                         <div class="form-outline mb-4">
-                                            <input type="email" id="form2Example1" name='email' class="form-control" />
                                             <label class="form-label" for="form2Example1">Email address</label>
+                                            <input type="email" id="form2Example1" name='email' class="form-control" />
                                         </div>
 
                                         <!-- Password input -->
                                         <div class="form-outline mb-4">
+                                            <label class="form-label" for="form2Example2">Password</label>
                                             <input type="password" id="form2Example2" name='password'
                                                 class="form-control" />
-                                            <label class="form-label" for="form2Example2">Password</label>
                                         </div>
 
                                         <!-- 2 column grid layout for inline styling -->
