@@ -1,0 +1,24 @@
+[
+    {
+        "ID": "6688590931697130181",
+        "name": "norbergp2",
+        "email": "norbergp2@mymail.nku.edu",
+        "password": "$2y$10$kcxqL6SxJQoW2ZLicZi1YueKZ.pOSEAElxl4j\/D0D3IRnulTYMgNK",
+        "dateJoined": 1697130181,
+        "bio": "",
+        "userProfileImage": "",
+        "AlbumID": "6688590931697130181",
+        "status": "1"
+    },
+    {
+        "ID": "5021468291697140945",
+        "name": "clarkj38",
+        "email": "clarkj38@mymail.nku.edu",
+        "password": "$2y$10$xSHBNcQzJK9MUnqLwX04Wu0lDxyYA2BxHnqw\/xheJMJq8OReBiBGC",
+        "dateJoined": 1697140945,
+        "bio": "",
+        "userProfileImage": "",
+        "AlbumID": "5021468291697140945",
+        "status": "1"
+    }
+]
