@@ -20,5 +20,27 @@
         "userProfileImage": "",
         "AlbumID": "10341429351696952687",
         "status": "1"
+    },
+    {
+        "ID": "9999229041696996214",
+        "name": "HirschP2",
+        "email": "HirschP2@nku.edu",
+        "password": "$2y$10$tc6E8fiZtFWlZJhR1ji4NO7nE3LGNOrblIi6vCBTlBM8UDuMLC32W",
+        "dateJoined": 1696996214,
+        "bio": "",
+        "userProfileImage": "",
+        "AlbumID": "9999229041696996214",
+        "status": "1"
+    },
+    {
+        "ID": "20441653791697000972",
+        "name": "Zarg O'Thrax",
+        "email": "Zargothrax@gloryhammer.com",
+        "password": "$2y$10$v\/ntzlz.34VdKCzb5q0YpukLy4j42I6MXC1gF6BxoBhqtv\/Mh0DA.",
+        "dateJoined": 1697000972,
+        "bio": "I am the Irish Keeper, of the celestial flame!",
+        "userProfileImage": "",
+        "AlbumID": "20441653791697000972",
+        "status": "1"
     }
 ]

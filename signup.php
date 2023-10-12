@@ -90,35 +90,35 @@ if (count($_POST) > 0) {
                                     <div class=" d-flex flex-row align-items-center mb-4">
                                         <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                                         <div class="form-outline flex-fill mb-0">
-                                            <input type="text" id="nameInput" name="userName" class="form-control" />
                                             <label class="form-label" for="nameInput">Your Username</label>
+                                            <input type="text" id="nameInput" name="userName" class="form-control" />
                                         </div>
                                     </div>
 
                                     <div class="d-flex flex-row align-items-center mb-4">
                                         <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
                                         <div class="form-outline flex-fill mb-0">
-                                            <input type="email" id="emailInput" name="email" class="form-control" />
                                             <label class="form-label" for="emailInput">Your Email</label>
+                                            <input type="email" id="emailInput" name="email" class="form-control" />
                                         </div>
                                     </div>
 
                                     <div class="d-flex flex-row align-items-center mb-4">
                                         <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
                                         <div class="form-outline flex-fill mb-0">
+                                            <label class="form-label" for="passwordInput">Password</label>
                                             <input type="password" id="passwordInput" name="password"
                                                 class="form-control" />
-                                            <label class="form-label" for="passwordInput">Password</label>
                                         </div>
                                     </div>
 
                                     <div class="d-flex flex-row align-items-center mb-4">
                                         <i class="fas fa-key fa-lg me-3 fa-fw"></i>
                                         <div class="form-outline flex-fill mb-0">
-                                            <input type="password" id="passwordInputRepeat" name="passwordRepeat"
-                                                class="form-control" />
                                             <label class="form-label" for="passwordInputRepeat">Repeat your
                                                 password</label>
+                                            <input type="password" id="passwordInputRepeat" name="passwordRepeat"
+                                                class="form-control" />
                                         </div>
                                     </div>
 
@@ -140,12 +140,11 @@ if (count($_POST) > 0) {
 
                                 </form>
                             </div>
-                            <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
-
-                                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp"
-                                    class="img-fluid" alt="Sample image">
-
-                            </div>
+<?php                            
+//	<div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
+//	<img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp" class="img-fluid" alt="Sample image">
+//	</div>
+?>
                         </div>
                     </div>
                 </div>
