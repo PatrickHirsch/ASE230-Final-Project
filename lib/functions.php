@@ -121,36 +121,36 @@ function getUsersPhotos($userID)
 	return $allImages;
 }
 
-function generateUserCard()
-{	
-	$userData=importJSON('data/users.json');
-	
-	foreach ($userData as $user) {
-        $status = $user['status'];
-        if ($status == 1 || $status == 3) {
-            echo '<div class="col mb-5">
-                            <div class="card h-100">
-                                <!-- User Profile image-->
-                                <img class="card-img-top" src="' . $user['userProfileImage'] . '" alt="Image of ' . $user['name'] . '" />
-                                <!-- User details-->
-                                <div class="card-body p-4">
-                                    <div class="text-center">
-                                        <!-- User name-->
-                                        <h5 class="fw-bolder">' . $user['name'] . '</h5>
-                                        <!-- User Start Date-->
-                                        <div class="text-center">' . convertTimeStamp($user) . '</div>
-                                    </div>
-                                </div>
-                                <!-- User actions-->
-                                <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                    <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="user.php?ID=' . $user['ID'] . '">Check out User</a></div>
-                                </div>
-                            </div>
-                        </div>';
-        }
-
-    }
-}
+//	function generateUserCard()
+//	{	
+//		$userData=importJSON('data/users.json');
+//		
+//		foreach ($userData as $user) {
+//	        $status = $user['status'];
+//			if ($status == 1 || $status == 3) {
+//	            echo '<div class="col mb-5">
+//	                            <div class="card h-100">
+//	                                <!-- User Profile image-->
+//	                                <img class="card-img-top" src="' . 'data/profilePhotos/'.$user['ID'] . '" alt="Image of ' . $user['name'] . '" />
+//	                                <!-- User details-->
+//	                                <div class="card-body p-4">
+//	                                    <div class="text-center">
+//	                                        <!-- User name-->
+//	                                        <h5 class="fw-bolder">' . $user['name'] . '</h5>
+//	                                        <!-- User Start Date-->
+//	                                        <div class="text-center">' . convertTimeStamp($user) . '</div>
+//	                                    </div>
+//	                                </div>
+//	                                <!-- User actions-->
+//	                                <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+//	                                    <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="user.php?ID=' . $user['ID'] . '">Check out User</a></div>
+//	                                </div>
+//	                            </div>
+//	                        </div>';
+//	        }
+//	
+//	    }
+//	}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -217,15 +217,17 @@ function generateAdminUserCards($userData)
 
 //generates user cards for index.php
 function generateUserCards($userData)
-{
+{	$ret="";
 
-    foreach ($userData as $user) {
-        $status = $user['status'];
-        if ($status == 1 || $status == 3) {
-            echo '<div class="col mb-5">
+    foreach ($userData as $user)
+	{	$status = $user['status'];
+		$profilePhoto=getProfilePhoto($user['ID']);
+		
+        if ($status == 1 || $status == 3)
+		{	$ret=$ret.'<div class="col mb-5">
                             <div class="card h-100">
                                 <!-- User Profile image-->
-                                <img class="card-img-top" src="' . $user['userProfileImage'] . '" alt="Image of ' . $user['name'] . '" />
+                                <img class="card-img-top rounded-circle" style="width: 200px;height: 200px;object-fit: cover;margin: auto;" src="' . $profilePhoto . '" alt="Image of ' . $user['name'] . '" />
                                 <!-- User details-->
                                 <div class="card-body p-4">
                                     <div class="text-center">
@@ -237,14 +239,19 @@ function generateUserCards($userData)
                                 </div>
                                 <!-- User actions-->
                                 <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                    <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="user.php?ID=' . $user['ID'] . '">Check out User</a></div>
+                                    <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="user.php?id=' . $user['ID'] . '">Check out User</a></div>
                                 </div>
                             </div>
                         </div>';
         }
 
     }
+	return $ret;
 }
 
-
+function getProfilePhoto($userID)
+{	$profilePhoto='data/profilePhotos/'.$userID;
+	if(!file_exists($profilePhoto)) $profilePhoto='data/profilePhotos/0';
+	return $profilePhoto;
+}
 ?>

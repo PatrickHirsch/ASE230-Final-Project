@@ -3,8 +3,15 @@ session_start();
 require_once 'header.php';
 require_once 'lib/functions.php';
 
+
+
 if($_SERVER['REQUEST_METHOD']==='POST')
-{	$allUsers=importJSON('data/users.json');
+{	
+	//	echo '<pre>';
+	//	var_dump($_FILES['profilePhoto']);
+	//	die();
+	
+	$allUsers=importJSON('data/users.json');
 	$authenticatedUser=$_SESSION['user_id'];
 	
 	for($i=0;$i<count($allUsers);$i++)
@@ -22,21 +29,30 @@ if($_SERVER['REQUEST_METHOD']==='POST')
 			}
 			
 			// Update Name
-			if($_POST['userName']!=="")
-			{	$allUsers[$i]['name']=$_POST['userName'];
-			}
+			if($_POST['userName']!=="") $allUsers[$i]['name']=$_POST['userName'];
 			
 			// Update Bio
 			$allUsers[$i]['bio']=$_POST['bioName'];	
+			
+			// Update Profile Image
+			if($_FILES['profilePhoto']['error']==0)
+			{	$isImage=['image/jpeg','image/png','image/gif'];
+				if
+				(	in_array($_FILES['profilePhoto']['type'],$isImage) &&
+					$_FILES['profilePhoto']['size']<=1500000
+				)	
+					move_uploaded_file($_FILES['profilePhoto']['tmp_name'],getProfilePhoto($allUsers[$i]['ID']));
+			}
 		}
 	}
 
 	writeJSON($allUsers,'data/users.json');
 	header("Location: user.php");
+	die();
 }
 else
 {	if(isset($_SESSION['user_id'])) $thisUser=getUserObject($_SESSION['user_id']);
-	else header("Location: signup.php");
+	else header("Location: login.php");
 }
 ?>
 
@@ -59,7 +75,7 @@ else
                                 <!-- p name="signUpformDiv" class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Sign up
                                 </p -->
                                 <form name="signUpForm" class="mx-1 mx-md-4" method="POST"
-                                    action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>">
+                                    action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>" enctype="multipart/form-data">
 
 
                                     <div class="d-flex flex-row align-items-center mb-4">
@@ -67,6 +83,16 @@ else
                                         <div class="form-outline flex-fill mb-0">
                                             <label class="form-label" for="emailInput">Email</label>
                                             <input type="email" id="emailInput" name="email" class="form-control" value="<?= $thisUser['email'] ?>" readonly />
+                                        </div>
+                                    </div>
+									
+									
+                                    <div class=" d-flex flex-row align-items-center mb-4">
+                                        <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                                        <div class="form-outline flex-fill mb-0">
+                                            <label class="form-label" for="profilePhoto">Profile Photo</label>
+                                            <br><img src="<?= getProfilePhoto($thisUser['ID']) ?>" style="width:100px">
+											<input type="file" id="profilePhoto" name="profilePhoto" class="form-control" />
                                         </div>
                                     </div>
 									
