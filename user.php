@@ -6,6 +6,8 @@ require_once 'lib/functions.php';
 $thisUser=null;
 if(isset($_GET['id'])) $thisUser=getUserObject($_GET['id']);
 else if(isset($_SESSION['user_id'])) $thisUser=getUserObject($_SESSION['user_id']);
+if(!($thisUser['status']==1 || $thisUser['status']==3)) $thisUser=null;
+
 if($thisUser==null) header("Location: index.php");
 
 $theseImages=getUsersPhotos($thisUser['ID']);
