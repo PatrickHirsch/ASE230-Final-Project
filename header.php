@@ -2,6 +2,7 @@
 function echoHeader($title = '', $subtitle = '')
 {
     $ret = '
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -10,6 +11,7 @@ function echoHeader($title = '', $subtitle = '')
         <meta name="description" content="" />
         <meta name="author" content="" />
         <title>' . $title . ' - MyPhotoVault</title>
+
         <!-- Favicon-->
         <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
         <!-- Bootstrap icons-->

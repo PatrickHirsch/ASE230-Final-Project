@@ -12,4 +12,4 @@ echo echoHeader('Users');
 echo generateUserCards($allUsers);
 
 		
-echoFooter() ?>
+echo echoFooter() ?>

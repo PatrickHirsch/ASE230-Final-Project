@@ -22,14 +22,14 @@
         "status": "1"
     },
     {
-        "ID": "13773603811697117499",
-        "name": "HirschP2",
-        "email": "HirschP2@nku.edu",
-        "password": "$2y$10$sU4qvvBpNPqlyLYgv1A4\/euMCl\/7U\/ZtYy.kTxceTRjhca4\/9TzYa",
-        "dateJoined": 1697117499,
-        "bio": "Hello world.",
+        "ID": "5021468291697140945",
+        "name": "clarkj38",
+        "email": "clarkj38@mymail.nku.edu",
+        "password": "$2y$10$xSHBNcQzJK9MUnqLwX04Wu0lDxyYA2BxHnqw\/xheJMJq8OReBiBGC",
+        "dateJoined": 1697140945,
+        "bio": "",
         "userProfileImage": "",
-        "AlbumID": "13773603811697117499",
+        "AlbumID": "5021468291697140945",
         "status": "1"
     }
 ]

@@ -1,4 +1,7 @@
 <?php
+session_start();
+require_once 'header.php';
+require_once 'lib/functions.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 

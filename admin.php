@@ -26,4 +26,6 @@ echo echoHeader('Admin Index');?>
         </div>
     </section>
     <!-- Footer-->
+
 <?= echoFooter();?>
+
