@@ -7,7 +7,7 @@ displaySessionMessage();
 processLogout();
 
 $allUsers=importJSON('data/users.json');
-var_dump($_SESSION['user_status']);
+//var_dump($_SESSION['user_status']);
 echo echoHeader('Users'); 
 echo generateUserCards($allUsers);
 
