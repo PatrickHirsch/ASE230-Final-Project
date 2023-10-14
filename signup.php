@@ -53,7 +53,6 @@ if (count($_POST) > 0) {
 
         // Save the updated users array back to users.json
 		writeJSON($users,$filePath);
-		
         // Optionally, you can redirect the user to a success page
         session_start(); // Start the session if not already started
         $_SESSION['success_message'] = 'Your account has been successfully created. Please login.';

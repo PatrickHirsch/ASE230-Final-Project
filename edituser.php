@@ -37,11 +37,13 @@ if($_SERVER['REQUEST_METHOD']==='POST')
 			// Update Profile Image
 			if($_FILES['profilePhoto']['error']==0)
 			{	$isImage=['image/jpeg','image/png','image/gif'];
+					var_dump($_FILES['profilePhoto']);
 				if
 				(	in_array($_FILES['profilePhoto']['type'],$isImage) &&
-					$_FILES['profilePhoto']['size']<=1500000
+					$_FILES['profilePhoto']['size']<=2000000
 				)	
-					move_uploaded_file($_FILES['profilePhoto']['tmp_name'],getProfilePhoto($allUsers[$i]['ID']));
+					move_uploaded_file($_FILES['profilePhoto']['tmp_name'],'data/profilePhotos/'.$allUsers[$i]['ID']);
+					//die('Here');
 			}
 		}
 	}
