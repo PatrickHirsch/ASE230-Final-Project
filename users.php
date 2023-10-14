@@ -12,6 +12,6 @@ $allUsers=importJSON('data/users.json');;
 if($_SESSION['status']==1){
    echo generateUserCards($allUsers);
 }else if($_SESSION['status']==3){
-echo generateAdminUserCards($userData); }?>
+echo generateAdminUserCards($allUsers); }?>
 		
 <?= echoFooter() ?>
