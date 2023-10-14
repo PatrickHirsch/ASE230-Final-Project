@@ -95,7 +95,7 @@ switch ($status) {
         </form>
     </div>
     <div class="d-flex justify-content-end">
-        <a href="adminIndex.php"><button name="toAdminIndex" type="submit">Back to Admin Index</button></a>
+        <a href="index.php"><button name="toIndex" type="submit">Back to Index</button></a>
     </div>
 </div>
 
