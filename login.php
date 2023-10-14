@@ -27,20 +27,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Store user data in the session
                 $_SESSION['email'] = $email;
                 $_SESSION['user_name'] = $user['name'];
-                $_SESSION['user_id']=$user['ID'];
-                $_SESSION['user_status']=$user['status'];
+                $_SESSION['user_id'] = $user['ID'];
+                $_SESSION['user_status'] = $user['status'];
 
-                if($_SESSION['user_status'] != 1 || $_SESSION['user_status'] != 3 ){
-                    if($_SESSION['user_status'] == 0){
+                if (!($_SESSION['user_status'] == 1 || $_SESSION['user_status'] == 3)) {
+                    if ($_SESSION['user_status'] == 0) {
                         echo "Your account has been deleted. Would you like to restore your account?<br>
                         <form method=\"POST\" action=\"\">
                         <input type=\"hidden\" name=\"email\" value=\"$email\">
                             <input type=\"hidden\" name=\"password\" value=\"$password\">
-                            <button name=\"restore\" type=\"submit\">Restore Account</button></form>";
+                            <button name=\"restore\" type=\"submit\">Restore Account</button>
+                            </form>";
                         die();
 
                     }
-                    if($_SESSION['user_status'] == -1){
+                    if ($_SESSION['user_status'] == -1) {
                         die("Your account has been removed by admin.");
                     }
                 }
@@ -49,21 +50,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 header('Location: user.php');
                 exit();
             }
-                if (isset($_POST['restore'])) {
-                    $restoredEmail = $_POST['email'];
-                    $restoredPassword = $_POST['password'];
+            if (isset($_POST['restore'])) {
+                $restoredEmail = $_POST['email'];
+                $restoredPassword = $_POST['password'];
 
-                    foreach ($userData as &$user) {
-                        if ($user['email'] === $restoredEmail && password_verify($restoredPassword, $user['password'])) {
-                            $user['status']= "1";
-                            var_dump($user);
-                            file_put_contents('data/users.json', json_encode($userData, JSON_PRETTY_PRINT));
-                            var_dump($userData);
-                            $_SESSION['success_message'] = "Your account has been restored. Please login.";
-                        }
+                foreach ($userData as &$user) {
+                    if ($user['email'] === $restoredEmail && password_verify($restoredPassword, $user['password'])) {
+                        $user['status'] = "1";
+                        file_put_contents('data/users.json', json_encode($userData, JSON_PRETTY_PRINT));
+                        $_SESSION['success_message'] = "Your account has been restored. Please login.";
                     }
-                    header('Location: login.php');
                 }
+                header('Location: login.php');
+            }
         }
 
         // If no matching user is found, display an error message

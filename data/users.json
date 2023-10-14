@@ -20,5 +20,16 @@
         "userProfileImage": "",
         "AlbumID": "10341429351696952687",
         "status": "1"
+    },
+    {
+        "ID": "13773603811697117499",
+        "name": "HirschP2",
+        "email": "HirschP2@nku.edu",
+        "password": "$2y$10$sU4qvvBpNPqlyLYgv1A4\/euMCl\/7U\/ZtYy.kTxceTRjhca4\/9TzYa",
+        "dateJoined": 1697117499,
+        "bio": "Hello world.",
+        "userProfileImage": "",
+        "AlbumID": "13773603811697117499",
+        "status": "1"
     }
 ]

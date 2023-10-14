@@ -8,31 +8,12 @@ require_once(__DIR__.'/lib/functions.php');
 
 
 //Check if user logged in is Admin (status 3)
-if (isset($_SESSION['user_id'])) {
-    if ($_SESSION['user_status'] != 3) {
-        session_destroy();
-        echo "<a href=\"login.php\">Back to Login</a> </br>";
-        die('You are not an admin. Go to naughty jail');
-    } else {
-        $loggedInUserId = $_SESSION['user_id'];
-        foreach ($userData as $user) {
-            if ($user['ID'] == $loggedInUserId) {
-                $loggedInUser = $user;
-            }
-        }
-    }
-} else {
-    echo "<a href=\"login.php\">Back to Login</a> </br>";
-    die('You are logged in. Please Login before continuing');
-}
+checkIfAdmin($userData);
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['logout'])) {
-        session_destroy();
-        header('Location: login.php');
-    }
+//Diplay any Session Messages
+displaySessionMessage();
 
-}
+
 
 
 
