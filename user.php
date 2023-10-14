@@ -3,6 +3,9 @@ session_start();
 require_once 'header.php';
 require_once 'lib/functions.php';
 
+displaySessionMessage();
+processLogout();
+
 $thisUser = null;
 if (isset($_GET['id']))
     $thisUser = getUserObject($_GET['id']);

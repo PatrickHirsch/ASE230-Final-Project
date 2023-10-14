@@ -7,6 +7,7 @@ checkIfAdmin($userData);
 
 //display any session messages
 displaySessionMessage();
+processLogout();
 
 if (isset($_GET['id'])) {
     $thisUser = getUserObject($_GET['id']);

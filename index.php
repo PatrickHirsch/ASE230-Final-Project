@@ -7,6 +7,8 @@ require_once 'lib/functions.php';
 //	echo '<!--';
 //	var_dump ($_SESSION);
 //	echo '-->';
+displaySessionMessage();
+processLogout();
 
 if(isset($_SESSION['user_id']))
 {	$thisUser=getUserObject($_SESSION['user_id']);

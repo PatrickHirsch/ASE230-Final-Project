@@ -3,15 +3,13 @@ session_start();
 require_once 'header.php';
 require_once 'lib/functions.php';
 
-$allUsers=importJSON('data/users.json');;
-?>
+displaySessionMessage();
+processLogout();
 
-<?= echoHeader('Users') ?>
+$allUsers=importJSON('data/users.json');
+var_dump($_SESSION['user_status']);
+echo echoHeader('Users'); 
+echo generateUserCards($allUsers);
+
 		
-<?
-if($_SESSION['status']==1){
-   echo generateUserCards($allUsers);
-}else if($_SESSION['status']==3){
-echo generateAdminUserCards($allUsers); }?>
-		
-<?= echoFooter() ?>
+echoFooter() ?>

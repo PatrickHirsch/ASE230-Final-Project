@@ -249,5 +249,13 @@ function displaySessionMessage()
     }
 }
 
+function processLogout(){
+    if (isset($_POST['logout'])) {
+        session_destroy();
+        $_SESSION['success_message'] = 'You have successfully logged out.';
+        header('Location: login.php');
+}
+}
+
 
 ?>
