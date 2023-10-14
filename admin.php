@@ -1,5 +1,5 @@
 <?php
-
+//This page shows an admin all the users on the site (both active and non-active). Admins can select a user to go to the admin edit page to change a users status.
 //Start session
 session_start();
 //decode users.json

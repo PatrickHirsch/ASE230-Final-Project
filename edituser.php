@@ -1,4 +1,5 @@
 <?php
+//This page allows a user to edit their own profile page (password,  name,  bio, ect)
 session_start();
 require_once 'header.php';
 require_once 'lib/functions.php';

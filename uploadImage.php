@@ -1,4 +1,5 @@
 <?php
+//This page allows a user to upload a new image to their album.
 
 session_start();
 require_once('./header.php');

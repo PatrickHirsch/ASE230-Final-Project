@@ -1,4 +1,5 @@
 <?php
+//This page displays a users image with the name of the image and the image description.
 require_once('./lib/functions.php');
 require_once('./header.php');
 $imagesJson = importJSON('./data/images.json');

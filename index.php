@@ -1,5 +1,6 @@
 <title>MyPhotoVault</title>
 <?php
+//Not sure what the purpose of this page is as users.php handles what I would believe this page should handle
 session_start();
 require_once 'header.php';
 require_once 'lib/functions.php';

@@ -1,4 +1,5 @@
 <?php
+//This page allows a user to edit the information of one of their photos.
 session_start();
 require_once('header.php');
 require_once('lib/functions.php');

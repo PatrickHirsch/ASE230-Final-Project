@@ -1,4 +1,5 @@
 <?php
+//This is the personal page for the user. Should display user's bio, profile image(if there is one), Name of the user who owns the page, and all the albums belonging to this user
 session_start();
 require_once 'header.php';
 require_once 'lib/functions.php';
@@ -15,7 +16,7 @@ if ($thisUser == null)
     header("Location: index.php");
 
 $theseImages = getUsersPhotos($thisUser['ID']);
-var_dump($_SESSION['user_status']);
+//var_dump($_SESSION['user_status']);
 echo echoHeader($thisUser['name'] . '\'s Profile', $thisUser['bio']); ?>
 
 

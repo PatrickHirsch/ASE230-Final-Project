@@ -1,4 +1,5 @@
 <?php
+//this page allows an admin to see all photos of a user and change the status of a user. Only active (1) and Banned (-1) user's statuses can be changed.
 session_start();
 require_once 'header.php';
 require_once 'lib/functions.php';

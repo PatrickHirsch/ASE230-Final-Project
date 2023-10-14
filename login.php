@@ -1,4 +1,5 @@
 <?php
+//This page allows an exhisting user to log back into their account.
 session_start();
 
 // Check if the success parameter is present in the URL

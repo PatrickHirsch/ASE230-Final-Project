@@ -1,4 +1,5 @@
 <?php
+//This page allows a new user to create an account on the site
 session_start();
 require_once 'header.php';
 require_once 'lib/functions.php';

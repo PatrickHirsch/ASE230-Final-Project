@@ -1,4 +1,7 @@
+
+
 <?php
+//function that returns the header (must be echoed out)
 function echoHeader($title = '', $subtitle = '')
 {
     
@@ -86,6 +89,7 @@ function echoHeader($title = '', $subtitle = '')
     return $ret;
 }
 
+//function returns footer when called (must be echoed out)
 function echoFooter()
 {
     echo '
