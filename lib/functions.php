@@ -61,7 +61,7 @@ function generateAlbum($rootPath='.')
     return $ret;
 }
 
-
+//Builds the section where user's photos should be displayed
 function generateUserAlbum($userID,$rootPath='.')
 {	$imagesArray=importJSON($rootPath.'/data/images.json');
 
@@ -83,6 +83,7 @@ function generateUserAlbum($userID,$rootPath='.')
     return $ret;
 }
 
+//Builds individual cards for each image associated with a user
 function generateAlbumSquare($img,$rootPath='.', $viewImageButton=true)
 {
     $ret='
@@ -120,6 +121,7 @@ function generateAlbumSquare($img,$rootPath='.', $viewImageButton=true)
     return $ret;
 }
 
+//Selects one specific user from the JSON
 function getUserObject($lookup, $field = 'ID')
 {
     $allUsers = importJSON('data/users.json');
@@ -129,7 +131,7 @@ function getUserObject($lookup, $field = 'ID')
 
     return null;
 }
-
+//Gets the users name. Works with function above.
 function getUserName($userID)
 {
     return getUserObject($userID)['name'];
@@ -145,6 +147,7 @@ function getImageObject($lookup, $field = 'ID')
     return null;
 }
 
+//Not sure what the difference is between this one and the one above.
 function getImageObjects($lookup, $field = 'owner')
 {
     $allImages = importJSON('data/images.json');
@@ -156,6 +159,7 @@ function getImageObjects($lookup, $field = 'owner')
     return $ret;
 }
 
+//gets users photos?
 function getUsersPhotos($userID)
 {
     $allImages = importJSON('data/images.json');
@@ -163,8 +167,7 @@ function getUsersPhotos($userID)
     return $allImages;
 }
 
-//Generates user cards for admin.php
-
+//converts php time() to an actual time and date according to our local time.
 function convertTimeStamp($user)
 {
     date_default_timezone_set('America/Kentucky/Louisville');
@@ -173,6 +176,7 @@ function convertTimeStamp($user)
     return $formattedDateTime;
 }
 
+//Generates user cards for admin.php
 function generateAdminUserCards($userData)
 {
 
@@ -248,6 +252,7 @@ function generateUserCards($userData)
 
     }
 }
+//checks if a user has admin access. If user does not have admin access the are automatically logged out and session is distroyed.
 function checkIfAdmin($userData)
 {
     if (isset($_SESSION['user_id'])) {
@@ -270,6 +275,7 @@ function checkIfAdmin($userData)
     }
 }
 
+//displays any "success_messages" 
 function displaySessionMessage()
 {
     // Check if the success parameter is present in the URL
@@ -279,6 +285,7 @@ function displaySessionMessage()
     }
 }
 
+//handles the logout button from header.php
 function processLogout(){
     if (isset($_POST['logout'])) {
         session_destroy();

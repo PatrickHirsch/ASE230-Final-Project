@@ -1,5 +1,6 @@
 <?php
 //This is the personal page for the user. Should display user's bio, profile image(if there is one), Name of the user who owns the page, and all the albums belonging to this user
+//This page on my branch doesn't look as good as index.php
 session_start();
 require_once 'header.php';
 require_once 'lib/functions.php';
