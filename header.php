@@ -1,6 +1,7 @@
 <?php
 function echoHeader($title = '', $subtitle = '')
 {
+    
     $ret = '
 
 <!DOCTYPE html>
@@ -33,7 +34,7 @@ function echoHeader($title = '', $subtitle = '')
                             <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">More</a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <li><a class="dropdown-item" href="users.php">All Users</a></li>';
-                                if ($_SESSION['user_id']==3){
+                                if ($_SESSION['user_status']==3){
                                 $ret = $ret . 
                                 '
                                 <li><hr class="dropdown-divider" /></li>

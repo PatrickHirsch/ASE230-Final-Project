@@ -15,8 +15,8 @@ if ($thisUser == null)
     header("Location: index.php");
 
 $theseImages = getUsersPhotos($thisUser['ID']);
-?>
-<?= echoHeader($thisUser['name'] . '\'s Profile', $thisUser['bio']) ?>
+var_dump($_SESSION['user_status']);
+echo echoHeader($thisUser['name'] . '\'s Profile', $thisUser['bio']); ?>
 
 
 <div class="container">
