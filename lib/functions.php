@@ -50,7 +50,9 @@ function generateAlbum($rootPath='.')
             <div class="container px-4 px-lg-5 mt-5">
                 <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                     ';
-	foreach($imagesArray as $img) $ret=$ret.generateAlbumSquare($img,$rootPath,true,false);
+	foreach($imagesArray as $img) 
+		if(getUserObject($img['owner'])['status']!=2)
+			$ret=$ret.generateAlbumSquare($img,$rootPath,true,false);
 	$ret=$ret.'
                 </div>
             </div>
