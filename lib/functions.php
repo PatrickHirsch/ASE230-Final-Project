@@ -213,7 +213,7 @@ function generateAdminUserCards($userData)
                             </div>
                             <!-- User actions-->
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="user.php?ID=' . $user['ID'] . '">Check out User</a></div>
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="adminEditUser.php?id=' . $user['ID'] . '">Check out User</a></div>
                             </div>
                             </form>
                         </div>

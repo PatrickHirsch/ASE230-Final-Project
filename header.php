@@ -34,7 +34,7 @@ function echoHeader($title='',$subtitle='')
                     </ul>';
 	
 	if(isset($_SESSION['user_id']))
-		$ret=$ret.'<a href="logout.php" class="text-muted">Logout</a>&nbsp;';
+		$ret=$ret.'<a href="logout.php" class="text-muted"><button class="btn btn-outline-dark" type="submit">Logout</button></a>&nbsp;';
 	
 	$ret=$ret.'
                     <form class="d-flex"';
