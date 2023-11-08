@@ -1,71 +1,70 @@
 <?php
-//This page allows a new user to create an account on the site
 session_start();
 require_once 'header.php';
 require_once 'lib/functions.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+class Users {
+    private $users = [];
+    private $filePath;
 
-if (count($_POST) > 0) {
-    //Checking for completeness
-    if (isset($_POST['userName'][0]) && isset($_POST['email'][0]) && isset($_POST['password'][0])){
-        if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)){
-            die("Please enter valid email");
-
+    public function __construct($filePath) {
+        $this->filePath = $filePath;
+        if (file_exists($filePath)) {
+            $this->users = json_decode(file_get_contents($filePath), true);
         }
     }
-    if ($_POST['password'] !== $_POST['passwordRepeat']){
-        die("Validated password does not match");
-    }
-    $uniqueId = mt_rand() . time();
 
-    // If all checks pass, proceed to save the user data
-    $userData = [
-        'ID' => $uniqueId,
-        'name' => $_POST['userName'],
-        'email' => $_POST['email'],
-        'password' => password_hash($_POST['password'], PASSWORD_BCRYPT),
-        'dateJoined' => time(),
-        'bio' => '',
-        'userProfileImage'=>'',
-        'AlbumID'=> $uniqueId,
-        'status' => '1'
-    ];
-    var_dump($userData);
-    $filePath=__DIR__ .'/data/users.json';
-    //var_dump($filePath);
-    // Read existing users from users.json, if it exists
-    $users = [];
-    if (file_exists($filePath)) {
-        $users = json_decode(file_get_contents($filePath), true);
-        //echo "path exist";
-        // Check if the email already exists in the users.json file
-        foreach ($users as $user) {
-            if ($user['email'] === $_POST['email']) {
+    public function addUser($userData) {
+        foreach ($this->users as $user) {
+            if ($user['email'] === $userData['email']) {
                 die('An account with this email already exists.');
             }
-            if ($user['name']=== $_POST['userName']){
-                die('That username is already in use. Please select another');
+            if ($user['name'] === $userData['name']) {
+                die('That username is already in use. Please select another.');
             }
         }
 
-        // Add the new user data to the existing users array
-        $users[] = $userData;
+        $uniqueId = mt_rand() . time();
+        $userData['ID'] = $uniqueId;
+        $userData['dateJoined'] = time();
+        $userData['AlbumID'] = $uniqueId;
+        $userData['status'] = '1';
+        $userData['password'] = password_hash($userData['password'], PASSWORD_BCRYPT);
 
-        // Save the updated users array back to users.json
-        file_put_contents($filePath, json_encode($users,JSON_PRETTY_PRINT));
+        $this->users[] = $userData;
 
-        // Optionally, you can redirect the user to a success page
-        session_start(); // Start the session if not already started
+        file_put_contents($this->filePath, json_encode($this->users, JSON_PRETTY_PRINT));
+
+        session_start();
         $_SESSION['success_message'] = 'Your account has been successfully created. Please login.';
         header('Location: login.php');
     }
-} else {
-        echo 'Please fill all feilds for sign up.';
 }
 
-}
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (count($_POST) > 0) {
+        if (isset($_POST['userName'][0]) && isset($_POST['email'][0]) && isset($_POST['password'][0])) {
+            if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+                die("Please enter a valid email.");
+            }
+            if ($_POST['password'] !== $_POST['passwordRepeat']) {
+                die("Validated password does not match.");
+            }
 
+            $userData = [
+                'name' => $_POST['userName'],
+                'email' => $_POST['email'],
+                'password' => $_POST['password'], // Password validation should be done in the class
+            ];
+
+            $filePath = __DIR__ . '/data/users.json';
+            $userManager = new Users($filePath);
+            $userManager->addUser($userData);
+        } else {
+            echo 'Please fill all fields for sign up.';
+        }
+    }
+}
 ?>
 
 <head>

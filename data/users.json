@@ -31,5 +31,14 @@
         "userProfileImage": "",
         "AlbumID": "5021468291697140945",
         "status": "1"
+    },
+    {
+        "name": "Test2",
+        "email": "test2@gmail.com",
+        "password": "$2y$10$xGgC.mgBs6WkK4m08dSVN.Gxtk6QipzdYsZd1YfpNTfr.gl.IUk0a",
+        "ID": "12950634071699484623",
+        "dateJoined": 1699484623,
+        "AlbumID": "12950634071699484623",
+        "status": "1"
     }
 ]

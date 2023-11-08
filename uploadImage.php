@@ -1,29 +1,46 @@
 <?php
-//This page allows a user to upload a new image to their album.
-
 session_start();
 require_once('./header.php');
 require_once('./lib/imageHandling.php');
 
-if (count($_FILES) > 0) {
-    $json = [
-        'id' => uniqid(),
-        'owner' => $_SESSION['user_id'],
-        'filename' => $_FILES['imageInput']['name'],
-        'name' => $_POST['nameInput'],
-        'rating' => 0,
-        'date' => time(),
-        'metadata' => [
-            'filesize' => $_FILES['imageInput']['size'],
-            'format' => $_FILES['imageInput']['type']
-        ]
-    ];
+class ImageUploader {
+    private $userId;
 
-    collectImage('imageInput', $_SESSION['user_id'], $json);
+    public function __construct($userId) {
+        $this->userId = $userId;
+    }
+
+    public function uploadImage($imageInput, $nameInput) {
+        if (count($_FILES) > 0) {
+            $imageData = [
+                'id' => uniqid(),
+                'owner' => $this->userId,
+                'filename' => $_FILES[$imageInput]['name'],
+                'name' => $nameInput,
+                'rating' => 0,
+                'date' => time(),
+                'metadata' => [
+                    'filesize' => $_FILES[$imageInput]['size'],
+                    'format' => $_FILES[$imageInput]['type']
+                ]
+            ];
+
+            collectImage($imageInput, $this->userId, $imageData);
+        }
+    }
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $userId = $_SESSION['user_id'];
 
+    if (isset($_POST['nameInput'])) {
+        $nameInput = $_POST['nameInput'];
+        $uploader = new ImageUploader($userId);
+        $uploader->uploadImage('imageInput', $nameInput);
+    }
+}
 ?>
+
 
 <?= echoHeader('Upload Image')?>
     <body>

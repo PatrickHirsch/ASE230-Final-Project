@@ -4,6 +4,8 @@
 //function that returns the header (must be echoed out)
 function echoHeader($title = '', $subtitle = '')
 {
+    require_once('lib/functions.php');
+    processLogout();
     
     $ret = '
 
