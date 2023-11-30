@@ -2,66 +2,56 @@
 session_start();
 require_once 'header.php';
 require_once 'lib/functions.php';
+require_once 'db/db.php';
+
+$errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-if (count($_POST) > 0) {
-    //Checking for completeness
-    if (isset($_POST['userName'][0]) && isset($_POST['email'][0]) && isset($_POST['password'][0])){
-        if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)){
-            die("Please enter valid email");
-
-        }
-    }
-    if ($_POST['password'] !== $_POST['passwordRepeat']){
-        die("Validated password does not match");
-    }
-    $uniqueId = mt_rand() . time();
-
-    // If all checks pass, proceed to save the user data
-    $userData = [
-        'ID' => $uniqueId,
-        'name' => $_POST['userName'],
-        'email' => $_POST['email'],
-        'password' => password_hash($_POST['password'], PASSWORD_BCRYPT),
-        'dateJoined' => time(),
-        'bio' => '',
-        'userProfileImage'=>'',
-        'AlbumID'=> $uniqueId,
-        'status' => '1'
-    ];
-    //var_dump($userData);
-    $filePath=__DIR__ .'/data/users.json';
-    //var_dump($filePath);
-    // Read existing users from users.json, if it exists
-    $users = [];
-    if (file_exists($filePath)) {
-        $users = importJSON($filePath);
-        //echo "path exist";
-        // Check if the email already exists in the users.json file
-        foreach ($users as $user) {
-            if ($user['email'] === $_POST['email']) {
-                die('An account with this email already exists.');
+    if (count($_POST) > 0) {
+        // Checking for completeness
+        if (
+            !isset($_POST['userName'][0]) ||
+            !isset($_POST['email'][0]) ||
+            !isset($_POST['password'][0])
+        ) {
+          $errors[] = 'Please fill all fields for sign up.';
+        } else {
+            if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+                $errors[] = 'Please enter a valid email address.';
             }
-            if ($user['name']=== $_POST['userName']){
-                die('That username is already in use. Please select another');
+
+            if ($_POST['password'] !== $_POST['passwordRepeat']) {
+                $errors[] = 'Validated password does not match.';
+            }
+
+            // Check for duplicate email or username
+            $duplicateStmt = $pdo->prepare(
+                'SELECT ID from users WHERE email = ? OR name = ?;'
+            );
+            $duplicateStmt->execute(
+                [$_POST['email'], $_POST['userName']]
+            );
+            
+            if ($duplicateStmt->rowCount() > 0) {
+                $errors[] = 'An account with this email or username already exists.';
+            } else {
+                // If all checks pass, proceed to save the user data
+                $uniqueId = mt_rand() . time();
+                $preparedQuery = $pdo->prepare(
+                    'INSERT INTO users (name, email, password, date_joined, status) VALUES (?, ?, ?, current_timestamp(), 1)'
+                );
+                $preparedQuery->execute(
+                    [$_POST['userName'], $_POST['email'], password_hash($_POST['password'], PASSWORD_BCRYPT)]
+                );
+                
+                session_start(); 
+                $_SESSION['success_message'] = 'Your account has been successfully created. Please login.';
+                header('Location: login.php');
             }
         }
-
-        // Add the new user data to the existing users array
-        $users[] = $userData;
-
-        // Save the updated users array back to users.json
-		writeJSON($users,$filePath);
-        // Optionally, you can redirect the user to a success page
-        session_start(); // Start the session if not already started
-        $_SESSION['success_message'] = 'Your account has been successfully created. Please login.';
-        header('Location: login.php');
+    } else {
+        $errors[] = 'Please fill all fields for sign up.';
     }
-} else {
-        echo 'Please fill all feilds for sign up.';
-}
-
 }
 
 ?>
@@ -80,6 +70,8 @@ if (count($_POST) > 0) {
                     <div class="card-body p-md-5">
                         <div class="row justify-content-center">
                             <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
+
+                                <?= echoErrors($errors); ?>
 
                                 <!-- p name="signUpformDiv" class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Sign up
                                 </p -->
@@ -139,7 +131,7 @@ if (count($_POST) > 0) {
 
                                 </form>
                             </div>
-<?php                            
+<?php
 //	<div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
 //	<img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp" class="img-fluid" alt="Sample image">
 //	</div>

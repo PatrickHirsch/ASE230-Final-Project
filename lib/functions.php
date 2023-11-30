@@ -287,5 +287,12 @@ function checkIfAdmin($userData)
     }
 }
 
+function echoErrors($textArray)
+{
+  foreach ($textArray as $_ => $text)
+  {
+    echo $text;
+  }
+}
 
 ?>

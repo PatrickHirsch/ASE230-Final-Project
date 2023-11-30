@@ -2,6 +2,7 @@
 session_start();
 require_once 'header.php';
 require_once 'lib/functions.php';
+require_once 'db/db.php';
 
 // Check if the success parameter is present in the URL
 if (isset($_SESSION['success_message'])) {
@@ -14,65 +15,56 @@ if (isset($_SESSION['email']) && isset($_SESSION['password'])) {
     exit();
 }
 
+$errors = [];
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['email']) && isset($_POST['password'])) {
-        $email = $_POST['email'];
-        $password = $_POST['password'];
-        //var_dump($email);
-        //var_dump($password);
-        // Read the user data from the JSON file
-        $userData = importJSON('data/users.json');
 
-        // Loop through user data to find a matching user
-        foreach ($userData as $user) {
-            if ($user['email'] === $email && password_verify($password, $user['password'])) {
-                // Store user data in the session
-                $_SESSION['email'] = $email;
-                $_SESSION['user_name'] = $user['name'];
-                $_SESSION['user_id']=$user['ID'];
-                $_SESSION['user_status']=$user['status'];
+// Check if email and password are set
+  if (!isset($_POST['email']) || !isset($_POST['password'])) {
+      $errors[] = 'Email and password are required.';
+  } else {
 
-                if($_SESSION['user_status'] != 1 || $_SESSION['user_status'] != 3 ){
-                    if($_SESSION['user_status'] == 0){
-                        echo "Your account has been deleted. Would you like to restore your account?<br>
-                        <form method=\"POST\" action=\"\">
-                        <input type=\"hidden\" name=\"email\" value=\"$email\">
-                            <input type=\"hidden\" name=\"password\" value=\"$password\">
-                            <button name=\"restore\" type=\"submit\">Restore Account</button></form>";
-                        die();
+    $email = $_POST['email'];
+    $password = $_POST['password'];
 
-                    }
-                    if($_SESSION['user_status'] == -1){
-                        die("Your account has been removed by admin.");
-                    }
-                }
-
-                // Redirect to user.php
-                header('Location: user.php');
-                exit();
-            }
-                if (isset($_POST['restore'])) {
-                    $restoredEmail = $_POST['email'];
-                    $restoredPassword = $_POST['password'];
-
-                    foreach ($userData as &$user) {
-                        if ($user['email'] === $restoredEmail && password_verify($restoredPassword, $user['password'])) {
-                            $user['status']= "1";
-                            //var_dump($user);
-                            writeJSON($userData,'data/users.json');
-							//var_dump($userData);
-                            $_SESSION['success_message'] = "Your account has been restored. Please login.";
-                        }
-                    }
-                    header('Location: login.php');
-                }
-        }
-
-        // If no matching user is found, display an error message
-        echo 'Invalid email or password. Please try again or Create an account';
+    // Read the user data from the JSON file
+    $stmt = $pdo->query('SELECT ID, name, email, password, status FROM users WHERE email = "' . $email . '";'); 
+    if ($stmt->rowCount() === 0) {
+      $errors[] = $email . ' was not found in our system';
     }
-}
+    else {
+      $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+      if (!password_verify($password, $userData['password'])) {
+        $errors[] = 'incorrect password';
+      } 
+      else {
+          $_SESSION['email'] = $userData['email'];
+          $_SESSION['user_name'] = $userData['name'];
+          $_SESSION['user_id'] = $userData['ID'];
+          $_SESSION['user_status'] = $userData['status'];
 
+
+          if ($_SESSION['user_status'] == 0) {
+              $errors[] = "Your account has been deleted. Would you like to restore your account?<br>
+              <form method=\"POST\" action=\"\">
+              <input type=\"hidden\" name=\"email\" value=\"$email\">
+                  <input type=\"hidden\" name=\"password\" value=\"$password\">
+                  <button name=\"restore\" type=\"submit\">Restore Account</button></form>";
+          }
+          else if ($_SESSION['user_status'] == -1) {
+              $errors[] = 'Your account has been removed by admin.';
+          }
+          else {
+            // Redirect to user.php
+            header('Location: user.php');
+            exit();
+          }
+
+
+      }
+    }
+  }
+}
 ?>
 <?= echoHeader('User Login') ?>
 <head>
@@ -91,6 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="card-body p-md-5">
                             <div class="row justify-content-center">
                                 <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
+                                    <?= echoErrors($errors); ?>
                                     <form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
                                         <!-- Email input -->
                                         <div class="form-outline mb-4">
@@ -108,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <!-- 2 column grid layout for inline styling -->
                                         <div class="row mb-4">
                                             <div class="col d-flex justify-content-center">
-                                                <!-- Checkbox 
+                                                <!-- Checkbox
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="checkbox" value=""
                                                         id="form2Example31" checked />
