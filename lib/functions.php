@@ -129,6 +129,10 @@ function generateAlbumSquare($img,$rootPath='.', $viewImageButton=true,$deleteIm
     return $ret;
 }
 
+function getUserName($pdo, $ID) {
+  
+}
+
 //Selects one specific user from the JSON
 function getUserObject($lookup,$field='ID')
 {	$allUsers=importJSON('data/users.json');
