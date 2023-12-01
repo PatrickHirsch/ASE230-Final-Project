@@ -28,8 +28,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'];
 
     // Read the user data from the JSON file
-    $query = $pdo->prepare('SELECT ID, name, email, password, status FROM users WHERE email = ?'); 
-    $stmt = $query->execute([$email]);
+    $stmt = $pdo->prepare('SELECT ID, name, email, password, status FROM users WHERE email = ?'); 
+    $stmt->execute([$email]);
     if ($stmt->rowCount() === 0) {
       $errors[] = $email . ' was not found in our system';
     }
@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 }
 ?>
-<?= echoHeader('User Login') ?>
+<?= echoHeader('User Login', '', $pdo) ?>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
