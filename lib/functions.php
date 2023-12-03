@@ -1,4 +1,11 @@
 <?php
+
+function getUserName($pdo, $id) {
+  $stmt = $pdo->prepare("SELECT name FROM users WHERE ID = ?");
+  $stmt->execute([$id]);
+  return $stmt->fetch()['name'];
+}
+ 
 function importJSON($filePath)
 {	$contents=file_get_contents($filePath);
     if(strpos($contents,"<?php")===0)
@@ -128,6 +135,8 @@ function generateAlbumSquare($img,$rootPath='.', $viewImageButton=true,$deleteIm
 	';
     return $ret;
 }
+
+
 
 //Selects one specific user from the JSON
 function getUserObject($lookup,$field='ID')
@@ -287,5 +296,12 @@ function checkIfAdmin($userData)
     }
 }
 
+function echoErrors($textArray)
+{
+  foreach ($textArray as $_ => $text)
+  {
+    echo $text;
+  }
+}
 
 ?>
