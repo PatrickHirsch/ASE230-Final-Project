@@ -1,4 +1,11 @@
 <?php
+
+function getUserName($pdo, $id) {
+  $stmt = $pdo->prepare("SELECT name FROM users WHERE ID = ?");
+  $stmt->execute([$id]);
+  return $stmt->fetch()['name'];
+}
+ 
 function importJSON($filePath)
 {	$contents=file_get_contents($filePath);
     if(strpos($contents,"<?php")===0)
@@ -50,7 +57,9 @@ function generateAlbum($rootPath='.')
             <div class="container px-4 px-lg-5 mt-5">
                 <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                     ';
-	foreach($imagesArray as $img) $ret=$ret.generateAlbumSquare($img,$rootPath,true,false);
+	foreach($imagesArray as $img) 
+		if(getUserObject($img['owner'])['status']!=2)
+			$ret=$ret.generateAlbumSquare($img,$rootPath,true,false);
 	$ret=$ret.'
                 </div>
             </div>
@@ -59,6 +68,7 @@ function generateAlbum($rootPath='.')
 	return $ret;
 }
 
+//Builds the section where user's photos should be displayed
 function generateUserAlbum($userID,$rootPath='.')
 {	$imagesArray=importJSON($rootPath.'/data/images.json');
 	
@@ -85,6 +95,7 @@ function generateUserAlbum($userID,$rootPath='.')
     return $ret;
 }
 
+//Builds individual cards for each image associated with a user
 function generateAlbumSquare($img,$rootPath='.', $viewImageButton=true,$deleteImageButton=false)
 {	if(isset($_SESSION['user_id'])&&($img['owner']==$_SESSION['user_id'])) $deleteImageButton=true;
 	else $deleteImageButton=false;
@@ -125,6 +136,9 @@ function generateAlbumSquare($img,$rootPath='.', $viewImageButton=true,$deleteIm
     return $ret;
 }
 
+
+
+//Selects one specific user from the JSON
 function getUserObject($lookup,$field='ID')
 {	$allUsers=importJSON('data/users.json');
 	foreach($allUsers as $user)
@@ -133,6 +147,7 @@ function getUserObject($lookup,$field='ID')
 	return null;
 }
 
+//Gets the users name. Works with function above.
 function getImageObject($lookup,$field='ID')
 {	$allImages=importJSON('data/images.json');
 	foreach($allImages as $img)
@@ -141,6 +156,7 @@ function getImageObject($lookup,$field='ID')
 	return null;
 }
 
+//Not sure what the difference is between this one and the one above.
 function getImageObjects($lookup,$field='owner')
 {	$allImages=importJSON('data/images.json');
 	$ret=[];
@@ -150,6 +166,7 @@ function getImageObjects($lookup,$field='owner')
 	return $ret;
 }
 
+//gets users photos?
 function getUsersPhotos($userID)
 {	$allImages=importJSON('data/images.json');
 	$ret=[];
@@ -161,10 +178,7 @@ function getUsersPhotos($userID)
 }
 
 
-////////////////////////////////////////////////////////////////////////////////
-
-//Generates user cards for admin.php
-
+//converts php time() to an actual time and date according to our local time.
 function convertTimeStamp($user)
 {
     date_default_timezone_set('America/Kentucky/Louisville');
@@ -173,6 +187,7 @@ function convertTimeStamp($user)
     return $formattedDateTime;
 }
 
+//Generates user cards for admin.php
 function generateAdminUserCards($userData)
 {
 
@@ -195,7 +210,7 @@ function generateAdminUserCards($userData)
         echo '<div class="col mb-5">
                         <div class="card h-100">
                             <!-- User Profile image-->
-                            <img class="card-img-top" src="' . $user['userProfileImage'] . '" alt="Image of ' . $user['name'] . '" />
+                            <img class="card-img-top" src="' . getProfilePhoto($user['ID']) . '" alt="Image of ' . $user['name'] . '" />
                             <!-- User details-->
                             <div class="card-body p-4">
                                 <div class="text-center">
@@ -209,7 +224,7 @@ function generateAdminUserCards($userData)
                             </div>
                             <!-- User actions-->
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="user.php?ID=' . $user['ID'] . '">Check out User</a></div>
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="adminEditUser.php?id=' . $user['ID'] . '">Check out User</a></div>
                             </div>
                             </form>
                         </div>
@@ -257,4 +272,36 @@ function getProfilePhoto($userID)
 	if(!file_exists($profilePhoto)) $profilePhoto='data/profilePhotos/0';
 	return $profilePhoto;
 }
+
+//checks if a user has admin access. If user does not have admin access the are automatically logged out and session is distroyed.
+function checkIfAdmin($userData)
+{
+    if (isset($_SESSION['user_id'])) {
+        if ($_SESSION['user_status'] != 3) {
+            session_destroy();
+            echo "<a href=\"login.php\">Back to Login</a> </br>";
+            die('You are not an admin. Go to naughty jail');
+        } else {
+            $loggedInUserId = $_SESSION['user_id'];
+            foreach ($userData as $user) {
+                if ($user['ID'] == $loggedInUserId) {
+                    $loggedInUser = $user;
+                    return $loggedInUser;
+                }
+            }
+        }
+    } else {
+        echo "<a href=\"login.php\">Back to Login</a> </br>";
+        die('You are not logged in. Please Login before continuing');
+    }
+}
+
+function echoErrors($textArray)
+{
+  foreach ($textArray as $_ => $text)
+  {
+    echo $text;
+  }
+}
+
 ?>

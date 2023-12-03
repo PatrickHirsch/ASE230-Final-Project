@@ -1,5 +1,6 @@
 <?php
-function echoHeader($title='',$subtitle='')
+require_once './db/db.php';
+function echoHeader($title='',$subtitle='', $pdo = null)
 {	$ret='
 <!DOCTYPE html>
 <html lang="en">
@@ -26,20 +27,21 @@ function echoHeader($title='',$subtitle='')
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
                         <li class="nav-item"><a class="nav-link" href="index.php">Home</a></li>
                         <li class="nav-item"><a class="nav-link" href="users.php">Users</a></li>
-                        <li class="nav-item"><a class="nav-link" href="uploadImage.php">Upload</a></li>
-                        <!-- li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="#!">All Products</a></li>
-                                <li><hr class="dropdown-divider" /></li>
-                                <li><a class="dropdown-item" href="#!">Popular Items</a></li>
-                                <li><a class="dropdown-item" href="#!">New Arrivals</a></li>
-                            </ul>
-                        </li -->
+                        <li class="nav-item"><a class="nav-link" href="uploadImage.php">Upload</a></li>';
+
+
+	if(isset($_SESSION['user_id']))
+    $stmt = $pdo->prepare("SELECT name, status FROM users WHERE ID = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $user = $stmt->fetch();
+
+		if($user['status']==3)
+			$ret=$ret.'<li class="nav-item"><a class="nav-link" href="admin.php">Admin Dashboard</a></li>';
+	$ret=$ret.'
                     </ul>';
 	
 	if(isset($_SESSION['user_id']))
-		$ret=$ret.'<a href="logout.php" class="text-muted">Logout</a>&nbsp;';
+		$ret=$ret.'<a href="logout.php" class="text-muted"><button class="btn btn-outline-dark" type="submit">Logout</button></a>&nbsp;';
 	
 	$ret=$ret.'
                     <form class="d-flex"';
