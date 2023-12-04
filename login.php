@@ -16,7 +16,6 @@ if (isset($_SESSION['email']) && isset($_SESSION['password'])) {
 }
 
 $errors = [];
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Check if email and password are set
@@ -27,7 +26,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
-    // Read the user data from the JSON file
     $stmt = $pdo->prepare('SELECT ID, name, email, password, status FROM users WHERE email = ?'); 
     $stmt->execute([$email]);
     if ($stmt->rowCount() === 0) {
@@ -67,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 }
 ?>
-<?= echoHeader('User Login', '', $pdo) ?>
+<?= echoHeader('User Login') ?>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">

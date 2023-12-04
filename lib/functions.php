@@ -181,17 +181,61 @@ function getUsersPhotos($userID)
 //converts php time() to an actual time and date according to our local time.
 function convertTimeStamp($user)
 {
+  if (isset($user['date_joined'])) {
     date_default_timezone_set('America/Kentucky/Louisville');
-    $userTimeStamp = $user['dateJoined'];
+    $userTimeStamp = strtotime($user['date_joined']);
     $formattedDateTime = date('Y-m-d H:i:s', $userTimeStamp);
     return $formattedDateTime;
+  }
 }
 
 //Generates user cards for admin.php
-function generateAdminUserCards($userData)
+function generateAdminUserCards($pdo)
 {
+  $stmt = $pdo->query("SELECT ID, name, date_joined, status FROM users");
+  $stmt->execute();
 
-    foreach ($userData as $user) {
+  while ($user = $stmt->fetch(PDO::FETCH_ASSOC)) {
+      $status = $user['status'];
+      switch ($status) {
+          case (-1):
+              $userStatus = "Admin Blocked";
+              break;
+          case (0):
+              $userStatus = "User Deleted";
+              break;
+          case (1):
+              $userStatus = "Active User";
+              break;
+          case (3):
+              $userStatus = "Admin";
+              break;
+      }
+      echo '<div class="col mb-5">
+                      <div class="card h-100">
+                          <!-- User Profile image-->
+                          <img class="card-img-top" src="' . getProfilePhoto($user['ID']) . '" alt="Image of ' . $user['name'] . '" />
+                          <!-- User details-->
+                          <div class="card-body p-4">
+                              <div class="text-center">
+                                  <!-- User name-->
+                                  <h5 class="fw-bolder">' . $user['name'] . '</h5>
+                                  <!-- User Start Date-->
+                                  <div class="text-center">' . convertTimeStamp($user) . '</div>
+                                  <!-- User Status-->
+                                  <div class="text-center">' . $userStatus . '</div>
+                              </div>
+                          </div>
+                          <!-- User actions-->
+                          <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                              <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="adminEditUser.php?id=' . $user['ID'] . '">Check out User</a></div>
+                          </div>
+                          </form>
+                      </div>
+                  </div>';
+  }
+
+    while ($user = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $status = $user['status'];
         switch ($status) {
             case (-1):
@@ -274,7 +318,7 @@ function getProfilePhoto($userID)
 }
 
 //checks if a user has admin access. If user does not have admin access the are automatically logged out and session is distroyed.
-function checkIfAdmin($userData)
+function checkIfAdmin($pdo, $id)
 {
     if (isset($_SESSION['user_id'])) {
         if ($_SESSION['user_status'] != 3) {
@@ -282,13 +326,9 @@ function checkIfAdmin($userData)
             echo "<a href=\"login.php\">Back to Login</a> </br>";
             die('You are not an admin. Go to naughty jail');
         } else {
-            $loggedInUserId = $_SESSION['user_id'];
-            foreach ($userData as $user) {
-                if ($user['ID'] == $loggedInUserId) {
-                    $loggedInUser = $user;
-                    return $loggedInUser;
-                }
-            }
+            $stmt = $pdo->prepare("SELECT ID, name, status FROM users where ID = ? ");
+            $stmt->execute([$id]);
+            return $stmt->fetch(PDO::FETCH_ASSOC);
         }
     } else {
         echo "<a href=\"login.php\">Back to Login</a> </br>";

@@ -2,15 +2,19 @@
 session_start();
 require_once 'header.php';
 require_once 'lib/functions.php';
-$userData=importJSON('data/users.json');
-checkIfAdmin($userData);
+require_once 'db/db.php';
 
+$stmt = $pdo->prepare("SELECT ID, name, status FROM users where ID = ? ");
+$updateStmt = $pdo->prepare('UPDATE users SET status = ? WHERE id = ?');
+$thisUser = null;
 
 if (isset($_GET['id'])) {
-    $thisUser = getUserObject($_GET['id']);
-    //var_dump($_GET['id']);
-} else if (isset($_SESSION['user_id']))
-    $thisUser = getUserObject($_SESSION['user_id']);
+    $thisUser = checkIfAdmin($pdo, $_GET['id']);
+} 
+else if (isset($_SESSION['user_id'])) {
+    $thisUser = checkIfAdmin($pdo, $_SESSION['user_id']);
+}
+
 if ($thisUser == null)
     header("Location: index.php");
 
@@ -19,35 +23,17 @@ $theseImages = getUsersPhotos($thisUser['ID']);
 //Process Admin User Ban
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['activateUser'])) {
-        foreach ($userData as &$user) {
-            if ($user['ID'] === $thisUser['ID']) {
-                $user['status'] = "1"; // Update the user's status
-            }
-        }
-
-        // Save the updated user data to the JSON file
-        writeJSON($userData,'data/users.json');
-
+        $updateStmt->execute([1, $thisUser['ID']]);
         $_SESSION['success_message'] = "This User has been activated.";
         header('Location: adminEditUser.php?id=' . $thisUser['ID']);
+        }
     }
-
 
     if (isset($_POST['banUser'])) {
-        foreach ($userData as &$user) {
-            if ($user['ID'] === $thisUser['ID']) {
-                $user['status'] = "-1"; // Update the user's status
-            }
-        }
-
-        // Save the updated user data to the JSON file
-        writeJSON($userData,'data/users.json');
-
+        $updateStmt->execute([-1, $thisUser['ID']]);
         $_SESSION['success_message'] = "This User has been banned.";
         header('Location: adminEditUser.php?id=' . $thisUser['ID']);
-    }
-
-}
+  }
 
 
 
@@ -57,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 <?php
-echo echoHeader($thisUser['name'] . '\'s Profile', $thisUser['bio']);
+echo echoHeader($thisUser['name'] . '\'s Profile', $thisUser['bio'] ?? '');
 
 $status = $thisUser['status'];
 switch ($status) {
