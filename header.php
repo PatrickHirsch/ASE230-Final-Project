@@ -1,6 +1,6 @@
 <?php
 require_once './db/db.php';
-function echoHeader($title='',$subtitle='', $pdo = null)
+function echoHeader($title='',$subtitle='')
 {	$ret='
 <!DOCTYPE html>
 <html lang="en">
@@ -29,14 +29,11 @@ function echoHeader($title='',$subtitle='', $pdo = null)
                         <li class="nav-item"><a class="nav-link" href="users.php">Users</a></li>
                         <li class="nav-item"><a class="nav-link" href="uploadImage.php">Upload</a></li>';
 
-
-	if(isset($_SESSION['user_id']))
-    $stmt = $pdo->prepare("SELECT name, status FROM users WHERE ID = ?");
-    $stmt->execute([$_SESSION['user_id']]);
-    $user = $stmt->fetch();
-
-		if($user['status']==3)
-			$ret=$ret.'<li class="nav-item"><a class="nav-link" href="admin.php">Admin Dashboard</a></li>';
+	if(isset($_SESSION['user_status']))
+  {
+		if($_SESSION['user_status']==3)
+      $ret=$ret.'<li class="nav-item"><a class="nav-link" href="admin.php">Admin Dashboard</a></li>';
+  }
 	$ret=$ret.'
                     </ul>';
 	

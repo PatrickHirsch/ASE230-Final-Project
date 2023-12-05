@@ -17,8 +17,12 @@ else
 	$homepageButtons='<br><a href="login.php" class="btn btn-primary btn-rounded btn-lg mt-4">Login</a> <a href="signup.php" class="btn btn-outline-primary btn-rounded btn-lg mt-4 text-white">Signup</a>';
 }
 ?>
-<?= echoHeader($welcomeMessage,$homepageButtons, $pdo) ?>
-		
-<?= generateAlbum() ?>
+<?= echoHeader($welcomeMessage,$homepageButtons) ?>
+				
+<?= generateAlbum($pdo) ?>
 		
 <?= echoFooter() ?>
+
+
+<?php
+updateImage($pdo,1,'HELLO');
