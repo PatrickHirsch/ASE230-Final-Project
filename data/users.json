@@ -1,44 +1,35 @@
 [
     {
-        "ID": "1279394321696948849",
-        "name": "SarahRiley",
-        "email": "rileys14@mymail.nku.edu",
-        "password": "$2y$10$74\/KWtwnj279pWXNmyt8mOV3qWITZrwt32KkvGMGYedJC4kTkLtn6",
-        "dateJoined": 1696948849,
+        "ID": "10582558411697340741",
+        "name": "TestUser",
+        "email": "testUser@gmail.com",
+        "password": "$2y$10$4E6SuLRSDMTMb.PPILeJKOrWxTfAm8OSTedMTUcZMJGgR4XAZXXJu",
+        "dateJoined": 1697340741,
         "bio": "",
         "userProfileImage": "",
-        "AlbumID": "1279394321696948849",
+        "AlbumID": "10582558411697340741",
+        "status": "1"
+    },
+    {
+        "ID": "7708528051697341085",
+        "name": "Sarah",
+        "email": "rileys14@mymail.nku.edu",
+        "password": "$2y$10$UiiBSdPg9Q1PcTSRVhPpNuwKoSgS23I9wZXem2kDVieXpqVArCi5S",
+        "dateJoined": 1697341085,
+        "bio": "Code bro",
+        "userProfileImage": "",
+        "AlbumID": "7708528051697341085",
         "status": "3"
     },
     {
-        "ID": "10341429351696952687",
-        "name": "TestUser",
-        "email": "testUser@gmail.com",
-        "password": "$2y$10$iAbcjV6pktbwlDuEQUVvgem9ZwdRr03v70ZhzP877ehlsCwuCS1lW",
-        "dateJoined": 1696952687,
-        "bio": "",
+        "ID": "1201255341697345614",
+        "name": "Denver",
+        "email": "Denver@gmail.com",
+        "password": "$2y$10$fzxC5lowcRuTBsV5DfOYg.RJVuO7qZZqzTcI\/bqrLGu8ICiMxjC2G",
+        "dateJoined": 1697345614,
+        "bio": "Woof",
         "userProfileImage": "",
-        "AlbumID": "10341429351696952687",
-        "status": "1"
-    },
-    {
-        "ID": "5021468291697140945",
-        "name": "clarkj38",
-        "email": "clarkj38@mymail.nku.edu",
-        "password": "$2y$10$xSHBNcQzJK9MUnqLwX04Wu0lDxyYA2BxHnqw\/xheJMJq8OReBiBGC",
-        "dateJoined": 1697140945,
-        "bio": "",
-        "userProfileImage": "",
-        "AlbumID": "5021468291697140945",
-        "status": "1"
-    },
-    {
-        "name": "Test2",
-        "email": "test2@gmail.com",
-        "password": "$2y$10$xGgC.mgBs6WkK4m08dSVN.Gxtk6QipzdYsZd1YfpNTfr.gl.IUk0a",
-        "ID": "12950634071699484623",
-        "dateJoined": 1699484623,
-        "AlbumID": "12950634071699484623",
+        "AlbumID": "1201255341697345614",
         "status": "1"
     }
 ]

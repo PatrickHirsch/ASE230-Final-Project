@@ -1,20 +1,20 @@
 <?php
-//this page allows an admin to see all photos of a user and change the status of a user. Only active (1) and Banned (-1) user's statuses can be changed.
 session_start();
 require_once 'header.php';
 require_once 'lib/functions.php';
-$userData = json_decode(file_get_contents('data/users.json'), true);
-checkIfAdmin($userData);
+require_once 'db/db.php';
 
-//display any session messages
-displaySessionMessage();
-processLogout();
+$stmt = $pdo->prepare("SELECT ID, name, status FROM users where ID = ? ");
+$updateStmt = $pdo->prepare('UPDATE users SET status = ? WHERE id = ?');
+$thisUser = null;
 
 if (isset($_GET['id'])) {
-    $thisUser = getUserObject($_GET['id']);
-    //var_dump($_GET['id']);
-} else if (isset($_SESSION['user_id']))
-    $thisUser = getUserObject($_SESSION['user_id']);
+    $thisUser = checkIfAdmin($pdo, $_GET['id']);
+} 
+else if (isset($_SESSION['user_id'])) {
+    $thisUser = checkIfAdmin($pdo, $_SESSION['user_id']);
+}
+
 if ($thisUser == null)
     header("Location: index.php");
 
@@ -23,35 +23,17 @@ $theseImages = getUsersPhotos($thisUser['ID']);
 //Process Admin User Ban
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['activateUser'])) {
-        foreach ($userData as &$user) {
-            if ($user['ID'] === $thisUser['ID']) {
-                $user['status'] = "1"; // Update the user's status
-            }
-        }
-
-        // Save the updated user data to the JSON file
-        file_put_contents('data/users.json', json_encode($userData, JSON_PRETTY_PRINT));
-
+        $updateStmt->execute([1, $thisUser['ID']]);
         $_SESSION['success_message'] = "This User has been activated.";
         header('Location: adminEditUser.php?id=' . $thisUser['ID']);
+        }
     }
-
 
     if (isset($_POST['banUser'])) {
-        foreach ($userData as &$user) {
-            if ($user['ID'] === $thisUser['ID']) {
-                $user['status'] = "-1"; // Update the user's status
-            }
-        }
-
-        // Save the updated user data to the JSON file
-        file_put_contents('data/users.json', json_encode($userData, JSON_PRETTY_PRINT));
-
+        $updateStmt->execute([-1, $thisUser['ID']]);
         $_SESSION['success_message'] = "This User has been banned.";
         header('Location: adminEditUser.php?id=' . $thisUser['ID']);
-    }
-
-}
+  }
 
 
 
@@ -61,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 <?php
-echo echoHeader($thisUser['name'] . '\'s Profile', $thisUser['bio']);
+echo echoHeader($thisUser['name'] . '\'s Profile', $thisUser['bio'] ?? '');
 
 $status = $thisUser['status'];
 switch ($status) {
@@ -97,7 +79,7 @@ switch ($status) {
         </form>
     </div>
     <div class="d-flex justify-content-end">
-        <a href="index.php"><button name="toIndex" type="submit">Back to Index</button></a>
+        <a href="admin.php"><button name="toIndex" type="submit">Back to Admin Dashboard</button></a>
     </div>
 </div>
 
