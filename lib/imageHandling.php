@@ -16,7 +16,7 @@ function collectImage($fileInputName, $userID, &$data) {
     }
 	
     // Check if the file size is less than or equal to 100,000 bytes (100 KB)
-    if ($_FILES[$fileInputName]['size'] > 5000000) {
+    if ($_FILES[$fileInputName]['size'] > 2000000) {
         return ['success' => false, 'message' => 'The uploaded image is too large.'];
     }
 
@@ -27,11 +27,6 @@ function collectImage($fileInputName, $userID, &$data) {
     if (!in_array($fileMimeType, $mimeTypes)) {
         return ['success' => false, 'message' => 'The uploaded file is not an image.'];
     }
-
-    
-	echo '<pre>';
-	var_dump($data);
-	echo '</pre>';
 
     // Generate a unique filename to avoid overwriting existing files
     $filename = 'image_' . $data['id'] . '.' . pathinfo($_FILES[$fileInputName]['name'], PATHINFO_EXTENSION);

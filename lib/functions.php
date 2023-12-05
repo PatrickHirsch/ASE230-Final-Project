@@ -392,15 +392,17 @@ function createGallery($pdo,$userID,$vis,$name,$desc)
 }
 function getGallery($pdo,$galID)
 {	$stmt=$pdo->prepare('SELECT * FROM galleries WHERE id=?');
-	$stmt->execute([$id]);
+	$stmt->execute([$galID]);
 	$ret=$stmt->fetch();
 	return $ret;
 }
-function updateGallery($pdo,$galID)
-{	//	$stmt=$pdo->prepare('DELETE FROM images WHERE id=?');
-	//	$stmt->execute([$id]);
-	//	$ret=$stmt->fetch();
-	//	return $ret;
+function updateGallery($pdo,$galID,$vis=null,$name=null,$desc=null)
+{	$pre=getGallery($pdo,$galID);
+	if($vis==null)	$vis=$pre['visibility'];
+	if($name==null)	$name=$pre['name'];
+	if($desc==null)	$desc=$pre['description'];
+	$stmt=$pdo->prepare('UPDATE galleries SET visibility = ?, name=?, description=? WHERE ID = ?');
+	$stmt->execute([$vis,$name,$desc,$galID]);
 }
 function deleteGallery($pdo,$galID)
 {	$stmt=$pdo->prepare('DELETE FROM galleries WHERE id=?');

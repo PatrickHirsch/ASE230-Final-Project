@@ -25,4 +25,7 @@ else
 
 
 <?php
-deleteImage($pdo,1);
+
+//createGallery($pdo,5,1,"Evil concuests","evil doin's");
+//updateGallery($pdo,7,1,"Evil conquests","evil doin's");
+updateGallery($pdo,7,null,"MY EVIL CONQUESTS!");
