@@ -26,7 +26,7 @@ if($isError===null)
 
 	$isAuthenticatedUser=false;
 	if(isset($_SESSION['user_id']))
-		if($_SESSION['user_id']==$selectedImage['owner_id'])
+		if($_SESSION['user_id']==$selectedImage['owner_ID'])
 			$isAuthenticatedUser=true;
 	echo generateAlbumSquare($pdo,$selectedImage,'.',false,$isAuthenticatedUser);
 }

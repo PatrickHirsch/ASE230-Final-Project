@@ -25,4 +25,4 @@ else
 
 
 <?php
-updateImage($pdo,1,'HELLO');
+deleteImage($pdo,1);
