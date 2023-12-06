@@ -18,7 +18,11 @@ else
 }
 ?>
 <?= echoHeader($welcomeMessage,$homepageButtons) ?>
-		
-<?= generateAlbum() ?>
+				
+<?= generateAlbum($pdo) ?>
 		
 <?= echoFooter() ?>
+
+
+<?php 
+leaveRating($pdo,5,11,3);

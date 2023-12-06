@@ -3,40 +3,20 @@ session_start();
 require_once('header.php');
 require_once('lib/functions.php');
 
-$imagesJson = importJSON('./data/images.json');
-
-if (!isset($_GET['photoid'])) {
-    header("Location: index.php");
-	die('No photo ID');
+if(!isset($_GET['photoid']))
+{	$isError='the photo id is invalid';
+}
+else
+{	$selectedImage=getImage($pdo,$_GET['photoid']);
+	if(!$selectedImage) header("Location: index.php");
 }
 
-$selectedImageIndex = findJsonIdIndex($imagesJson, $_GET['photoid']);
-
-if ($selectedImageIndex === null) {
-    header("Location: index.php");
-	die('Photo could not be found with id of' . $_GET['photoid']);
-}
-
-$selectedImage = $imagesJson[$selectedImageIndex];
-
-
-if ($selectedImageIndex === null) {
-    die('photo couldn\'t be found');
-}
-
-if ($selectedImage['owner'] !== $_SESSION['user_id']) {
-    header("Location: index.php");
-	die('You are not authorized to view this page');
-}
+if($selectedImage['owner_ID']!=$_SESSION['user_id']) header("Location: index.php");
 
 $updatedSuccessfully = false;
 
 if (count($_POST) > 0) {
-    $selectedImage['name'] = $_POST['nameInput'];
-    $selectedImage['rating'] = $_POST['ratingInput'];
-    $imagesJson[$selectedImageIndex] = $selectedImage;
-
-    writeJSON($imagesJson, 'data/images.json');
+    updateImage($pdo,$_GET['photoid'],$_POST['nameInput']);
     $updatedSuccessfully = true;
 }
 ?>
@@ -61,36 +41,39 @@ if (count($_POST) > 0) {
                                     <div style="color: green;">
                                         <?php if ($updatedSuccessfully) echo 'Photo edited successfully' ?>
                                     </div>
+
+									<div style="text-align:center">
+										<img src=<?= $selectedImage['url'] ?> style="width:300px;padding:auto;">
+									</div>
+
                                     <form name="signUpForm" class="mx-1 mx-md-4" method="POST"
                                           action="<?= htmlspecialchars($_SERVER['PHP_SELF'] . '?photoid=' . $_GET['photoid']) ?>">
-
-
-                                        <div class="d-flex flex-row align-items-center mb-4">
+										<div class="d-flex flex-row align-items-center mb-4">
                                             <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
                                             <div class="form-outline flex-fill mb-0">
                                                 <label class="form-label" for="nameInput">Name</label>
                                                 <input type="text" id="nameInput" name="nameInput" class="form-control" value="<?= $selectedImage['name'] ?>" required/>
                                             </div>
                                         </div>
-
-                                        <div class=" d-flex flex-row align-items-center mb-4">
-                                            <i class="fas fa-user fa-lg me-3 fa-fw"></i>
-                                            <div class="form-outline flex-fill mb-0">
-                                                <label class="form-label" for="ratingInput">Rating</label>
-                                                <select name="ratingInput" id="ratingInput" class="form-select">
-                                                    <?php
-                                                    for ($i = 0; $i <= 5; $i++) {
-                                                        if ($selectedImage['rating'] == $i) {
-                                                            echo '<option value="'.$i.'" selected>'.$i.'</option>';
-                                                        } else {
-                                                            echo '<option value="'.$i.'">'.$i.'</option>';
-                                                        }
-                                                    }
-                                                    ?>
-                                                </select>
-                                            </div>
-                                        </div>
-
+<?php
+////                                        <div class=" d-flex flex-row align-items-center mb-4">
+////                                            <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+////                                            <div class="form-outline flex-fill mb-0">
+////                                                <label class="form-label" for="ratingInput">Rating</label>
+////                                                <select name="ratingInput" id="ratingInput" class="form-select">
+////                                                    <?php
+////                                                    for ($i = 0; $i <= 5; $i++) {
+////                                                        if ($selectedImage['rating'] == $i) {
+////                                                            echo '<option value="'.$i.'" selected>'.$i.'</option>';
+////                                                        } else {
+////                                                            echo '<option value="'.$i.'">'.$i.'</option>';
+////                                                        }
+////                                                    }
+////                                                    ?######>
+////                                                </select>
+////                                            </div>
+////                                        </div>
+?>
                                         <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
                                             <button type="submit" class="btn btn-primary btn-lg">Update Image</button>
                                         </div>

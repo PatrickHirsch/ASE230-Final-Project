@@ -10,11 +10,11 @@
  * @return array Associative array containing the 'success' status (boolean) and a message or filename.
  */
 function collectImage($fileInputName, $userID, &$data) {
-    // Check if the file was uploaded without errors
+	// Check if the file was uploaded without errors
     if ($_FILES[$fileInputName]['error'] !== UPLOAD_ERR_OK) {
         return ['success' => false, 'message' => 'File upload error.'];
     }
-
+	
     // Check if the file size is less than or equal to 100,000 bytes (100 KB)
     if ($_FILES[$fileInputName]['size'] > 2000000) {
         return ['success' => false, 'message' => 'The uploaded image is too large.'];
@@ -31,7 +31,7 @@ function collectImage($fileInputName, $userID, &$data) {
     // Generate a unique filename to avoid overwriting existing files
     $filename = 'image_' . $data['id'] . '.' . pathinfo($_FILES[$fileInputName]['name'], PATHINFO_EXTENSION);
     $homeDir = dirname(__DIR__);
-    $uploadDirectory = $homeDir . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'users' . DIRECTORY_SEPARATOR . $userID;
+    $uploadDirectory = $homeDir . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'images';
 
     if (!is_dir($uploadDirectory)) {
         mkdir($uploadDirectory);
@@ -42,15 +42,7 @@ function collectImage($fileInputName, $userID, &$data) {
         return ['success' => false, 'message' => 'Failed to move the uploaded file.'];
     }
     $data['url'] = 'data' . DIRECTORY_SEPARATOR . 'users' . DIRECTORY_SEPARATOR . $userID . DIRECTORY_SEPARATOR . $filename;
-
-    $photosJsonLink = $homeDir.DIRECTORY_SEPARATOR.'data'.DIRECTORY_SEPARATOR.'images.json';
-    $photosJsonString = file_get_contents($photosJsonLink);
-
-    $photosJsonArray = json_decode($photosJsonString, true);
-    $photosJsonArray[] = $data;
-
-    $updatedData = json_encode($photosJsonArray, JSON_PRETTY_PRINT);
-    file_put_contents($photosJsonLink, $updatedData);
+	
     return ['success' => true, 'filename' => $filename];
 }
 
@@ -62,37 +54,37 @@ function collectImage($fileInputName, $userID, &$data) {
  *
  * @return array Associative array containing the 'success' status (boolean) and a message or filename.
  */
-function deleteImage($photoId) {
-    // home dir relative to this file being in ./lib
-    $homeDir = dirname(__DIR__);
-    $photosJsonLink = $homeDir.DIRECTORY_SEPARATOR.'data'.DIRECTORY_SEPARATOR.'images.json';
-    $jsonString = file_get_contents($photosJsonLink);
-    $jsonArray = json_decode($jsonString, true);
-
-    $indexToRemove = null;
-
-    // filters the photoId from the photo name
-    if (preg_match('/image_(.*?)\./', $photoId, $matches)) {
-        $photoId = $matches[1];
-    }
-
-    // finds and deletes the photo file
-    foreach ($jsonArray as $index => $data) {
-        if ($data['id'] === $photoId) {
-            $photoLink = $homeDir.DIRECTORY_SEPARATOR.$data['url'];
-            unlink($photoLink);
-            $indexToRemove = $index;
-            break;
-        }
-    }
-
-    if ($indexToRemove === null) {
-        return ['success' => false, 'message' => 'No file of the name provided was found'];
-    }
-
-    unset($jsonArray[$indexToRemove]);
-    $updatedData = json_encode($jsonArray, JSON_PRETTY_PRINT);
-    file_put_contents($photosJsonLink, $updatedData);
-    return ['success' => true, 'message' => 'File deleted successfully'];
-}
+//	function deleteImage($photoId) {
+//	    // home dir relative to this file being in ./lib
+//	    $homeDir = dirname(__DIR__);
+//	    $photosJsonLink = $homeDir.DIRECTORY_SEPARATOR.'data'.DIRECTORY_SEPARATOR.'images.json';
+//	    $jsonString = file_get_contents($photosJsonLink);
+//	    $jsonArray = json_decode($jsonString, true);
+//	
+//	    $indexToRemove = null;
+//	
+//	    // filters the photoId from the photo name
+//	    if (preg_match('/image_(.*?)\./', $photoId, $matches)) {
+//	        $photoId = $matches[1];
+//	    }
+//	
+//	    // finds and deletes the photo file
+//	    foreach ($jsonArray as $index => $data) {
+//	        if ($data['id'] === $photoId) {
+//	            $photoLink = $homeDir.DIRECTORY_SEPARATOR.$data['url'];
+//	            unlink($photoLink);
+//	            $indexToRemove = $index;
+//	            break;
+//	        }
+//	    }
+//	
+//	    if ($indexToRemove === null) {
+//	        return ['success' => false, 'message' => 'No file of the name provided was found'];
+//	    }
+//	
+//	    unset($jsonArray[$indexToRemove]);
+//	    $updatedData = json_encode($jsonArray, JSON_PRETTY_PRINT);
+//	    file_put_contents($photosJsonLink, $updatedData);
+//	    return ['success' => true, 'message' => 'File deleted successfully'];
+//	}
 

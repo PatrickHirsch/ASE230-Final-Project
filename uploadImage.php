@@ -4,6 +4,7 @@ session_start();
 require_once('./lib/functions.php');
 require_once('./lib/imageHandling.php');
 require_once('./header.php');
+$headerText='Upload Image';
 
 if(!isset($_SESSION['user_id'])) header("Location: login.php");
 
@@ -21,13 +22,16 @@ if (count($_FILES) > 0) {
         ]
     ];
 
-    collectImage('imageInput', $_SESSION['user_id'], $json);
+    $colImg=collectImage('imageInput', $_SESSION['user_id'], $json);
+	
+	if($colImg['success']) createImage($pdo,$_SESSION['user_id'],$colImg['filename'],$_POST['nameInput']);
+	else $headerText='<span style="color:#F00;">'.$colImg['message'].'</span><br>'.$headerText;
 }
 
 
 ?>
 
-<?= echoHeader('Upload Image')?>
+<?= echoHeader($headerText)?>
     <body>
     <section style="background-color: #eee;">
         <div class="container h-100">
