@@ -18,6 +18,8 @@ $updatedSuccessfully = false;
 if (count($_POST) > 0) {
     updateImage($pdo,$_GET['photoid'],$_POST['nameInput']);
     $updatedSuccessfully = true;
+	//$selectedImage=getImage($pdo,$_GET['photoid']);
+	header('Location:image.php?photoid='.$_GET['photoid']);
 }
 ?>
 <?= echoHeader('Edit Image') ?>

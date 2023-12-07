@@ -3,36 +3,35 @@ session_start();
 require_once('header.php');
 require_once('./lib/imageHandling.php');
 require_once('lib/functions.php');
+?>
 
-$imagesJson = importJSON('./data/images.json');
+<?php
+$isError=null;
 
-if (!isset($_GET['photoid'])) {
-    die('No photo ID');
+if(!(isset($_GET['photoid'])&&isset($_SESSION['user_id'])))
+{	$isError='photo or user could not be identified';
+}
+else
+{	$selectedImage=getImage($pdo,$_GET['photoid']);
+	if(!$selectedImage) $isError='photo could not be found';
+	elseif($selectedImage['owner_ID']!=$_SESSION['user_id']) $isError='You are not authorized to view this page';
 }
 
-$selectedImageIndex = findJsonIdIndex($imagesJson, $_GET['photoid']);
-
-if ($selectedImageIndex === null) {
-    die('Photo could not be found with id of' . $_GET['photoid']);
+if($isError===null)
+{	$updatedSuccessfully=false;
+	if(count($_POST)>0)
+	{	if ($_POST['delete']==='true')
+		{	deleteImage($pdo,$_GET['photoid']);
+			$updatedSuccessfully=true;
+		}
+	}
 }
-
-$selectedImage = $imagesJson[$selectedImageIndex];
-
-if ($selectedImage['owner'] !== $_SESSION['user_id']) {
-    die('You are not authorized to view this page');
-}
-
-$updatedSuccessfully = false;
-
-if (count($_POST) > 0) {
-    if ($_POST['delete'] === 'true') {
-        unset($imagesJson[$selectedImageIndex]);
-
-        deleteImage($_GET['photoid']);
-        $updatedSuccessfully = true;
-    }
+else
+{	echo echoHeader($isError);
+	header('Location: index.php');
 }
 ?>
+
 
 <?= echoHeader('Delete Image') ?>
 <head>

@@ -22,3 +22,7 @@ else
 <?= generateAlbum($pdo) ?>
 		
 <?= echoFooter() ?>
+
+
+<?php 
+leaveRating($pdo,5,11,3);

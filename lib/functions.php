@@ -112,7 +112,9 @@ function generateAlbumSquare($pdo,$img,$rootPath='.', $viewImageButton=true,$del
                                     <!-- Product reviews-->
                                     <div class="d-flex justify-content-center small text-warning mb-2">';
 	for($star=1;$star<=getRating($pdo,$img['ID']);$star++)	$ret=$ret.'<div class="bi-star-fill"></div>';
+	if(isset($_SESSION['user_id'])) $ret=$ret.'<a href="#" onClick="MyWindow=window.open(\'rateimage.php?photoid='.$img['ID'].'\',\'MyWindow\',\'width=600,height=300\'); return false;">';
 $ret=$ret.'('.getRating($pdo,$img['ID']).') ';
+	if(isset($_SESSION['user_id'])) $ret=$ret.'</a>';
     $ret=$ret.'</div>
                                     <!-- Product price-->
                                     <a class="text-muted" href="user.php?id='.$img['owner_ID'].'">'. getUserName($pdo,$img['owner_ID']) .'</a>
@@ -373,6 +375,14 @@ function getRating($pdo,$imgID)
 	$stmt->execute([$imgID]);
 	$ret=$stmt->fetch();
 	return $ret['star'];
+}
+function getUsersRating($pdo,$userID,$imgID)
+{	$ret=0;
+	$stmt=$pdo->prepare('SELECT stars FROM ratings WHERE img_ID = ? AND user_ID = ?;');
+	$stmt->execute([$imgID,$userID]);
+	$ret=$stmt->fetch();
+	if(!isset($ret['stars'])) return -1;
+	return $ret['stars'];
 }
 function leaveRating($pdo,$userID,$imgID,$stars=-1)
 {	$stmt=$pdo->prepare('DELETE FROM ratings WHERE user_ID = ? AND img_ID = ?;');
