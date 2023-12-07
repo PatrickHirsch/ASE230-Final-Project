@@ -16,11 +16,7 @@ function collectImage($fileInputName, $userID, &$data) {
     }
 
     // Check if the file size is less than or equal to 100,000 bytes (100 KB)
-<<<<<<< HEAD
     if ($_FILES[$fileInputName]['size'] > 100000) {
-=======
-    if ($_FILES[$fileInputName]['size'] > 2000000) {
->>>>>>> origin/master
         return ['success' => false, 'message' => 'The uploaded image is too large.'];
     }
 

@@ -1,4 +1,5 @@
 <?php
+require_once './db/db.php';
 function echoHeader($title='',$subtitle='')
 {	$ret='
 <!DOCTYPE html>
@@ -27,9 +28,12 @@ function echoHeader($title='',$subtitle='')
                         <li class="nav-item"><a class="nav-link" href="index.php">Home</a></li>
                         <li class="nav-item"><a class="nav-link" href="users.php">Users</a></li>
                         <li class="nav-item"><a class="nav-link" href="uploadImage.php">Upload</a></li>';
-	if(isset($_SESSION['user_id']))
-		if(getUserObject($_SESSION['user_id'])['status']==3)
-			$ret=$ret.'<li class="nav-item"><a class="nav-link" href="admin.php">Admin Dashboard</a></li>';
+
+	if(isset($_SESSION['user_status']))
+  {
+		if($_SESSION['user_status']==3)
+      $ret=$ret.'<li class="nav-item"><a class="nav-link" href="admin.php">Admin Dashboard</a></li>';
+  }
 	$ret=$ret.'
                     </ul>';
 	
