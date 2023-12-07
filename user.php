@@ -1,47 +1,45 @@
 <?php
-//This is the personal page for the user. Should display user's bio, profile image(if there is one), Name of the user who owns the page, and all the albums belonging to this user
-//This page on my branch doesn't look as good as index.php
 session_start();
 require_once 'header.php';
 require_once 'lib/functions.php';
-
-displaySessionMessage();
-processLogout();
+require_once './db/db.php';
 
 $thisUser = null;
-if (isset($_GET['id']))
+
+if (isset($_GET['id'])) {
     $thisUser = getUserObject($_GET['id']);
-else if (isset($_SESSION['user_id']))
+} else if (isset($_SESSION['user_id'])) {
     $thisUser = getUserObject($_SESSION['user_id']);
-if ($thisUser == null)
+}
+
+// If the user's status is neither 1 nor 3, set $thisUser to null
+if ($thisUser && !in_array($thisUser['status'], [1, 3])) {
+    $thisUser = null;
+}
+
+// Redirect if $thisUser is null
+if ($thisUser == null) {
     header("Location: index.php");
+    exit(); // Stop further execution of the script
+}
 
+// Assuming getUsersPhotos function and other functions are properly defined elsewhere
 $theseImages = getUsersPhotos($thisUser['ID']);
-//var_dump($_SESSION['user_status']);
-echo echoHeader($thisUser['name'] . '\'s Profile', $thisUser['bio']); ?>
+?>
 
-
-<div class="container">
-	<div class="row justify-content-center">
-		<div style="width: 95%;padding: 20px;">
-			<?php if(isset($_SESSION['user_id']) && $thisUser['ID']==$_SESSION['user_id']) echo '<a href="edituser.php">Edit my profile</a>'; ?>
-            <br>
-			<?php if(isset($_SESSION['user_id']) && $thisUser['ID']==$_SESSION['user_id']) echo '<a href="uploadImage.php">Upload a New Image</a>'; ?>
-
-
-		</div>
-	</div>
-</div>
-
-
+<?= echoHeader($thisUser['name'] . '\'s Profile', $thisUser['bio']) ?>
 	
-
-<hr>
-<?= generateAlbum(__DIR__); ?>
-
-
-<!-- pre><?= print_r($theseImages); ?></pre>
-<pre><?= print_r($thisUser); ?></pre>
-<pre><?= print_r($_SESSION); ?></pre-->
-
+<div class="container">
+    <div class="row justify-content-center">
+        <div style="width: 95%;padding: 20px;">
+            <?php if (isset($_SESSION['user_id']) && $thisUser['ID'] == $_SESSION['user_id']) : ?>
+                <a href="edituser.php">Edit my profile</a><br>
+                <a href="uploadImage.php">Upload a New Image</a>
+            <?php endif; ?>
+        </div>
+    </div>
+    <hr>
+    <?= generateUserAlbum($thisUser['ID']); ?>
+</div>
+		
 <?= echoFooter() ?>

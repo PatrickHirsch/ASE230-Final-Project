@@ -1,5 +1,8 @@
 <?php
+<<<<<<< HEAD
 //This page allows a user to edit the information of one of their photos.
+=======
+>>>>>>> 2c4588fa305e3873098c9468183810f6ddc8d011
 session_start();
 require_once('header.php');
 require_once('lib/functions.php');
@@ -7,13 +10,23 @@ require_once('lib/functions.php');
 $imagesJson = importJSON('./data/images.json');
 
 if (!isset($_GET['photoid'])) {
+<<<<<<< HEAD
     die('No photo ID');
+=======
+    header("Location: index.php");
+	die('No photo ID');
+>>>>>>> 2c4588fa305e3873098c9468183810f6ddc8d011
 }
 
 $selectedImageIndex = findJsonIdIndex($imagesJson, $_GET['photoid']);
 
 if ($selectedImageIndex === null) {
+<<<<<<< HEAD
     die('Photo could not be found with id of' . $_GET['photoid']);
+=======
+    header("Location: index.php");
+	die('Photo could not be found with id of' . $_GET['photoid']);
+>>>>>>> 2c4588fa305e3873098c9468183810f6ddc8d011
 }
 
 $selectedImage = $imagesJson[$selectedImageIndex];
@@ -24,7 +37,12 @@ if ($selectedImageIndex === null) {
 }
 
 if ($selectedImage['owner'] !== $_SESSION['user_id']) {
+<<<<<<< HEAD
     die('You are not authorized to view this page');
+=======
+    header("Location: index.php");
+	die('You are not authorized to view this page');
+>>>>>>> 2c4588fa305e3873098c9468183810f6ddc8d011
 }
 
 $updatedSuccessfully = false;

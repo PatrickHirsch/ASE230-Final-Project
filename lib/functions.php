@@ -53,11 +53,9 @@ function generateAlbum($pdo,$rootPath='.')
             <div class="container px-4 px-lg-5 mt-5">
                 <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                     ';
-	foreach($sqlResponce as $id) 
-	{	$img=getImage($pdo,$id['ID']);
-		if(true)//getUserObject($img['owner'])['status']!=2)	////////////////////////
-			$ret=$ret.generateAlbumSquare($pdo,$img,$rootPath,true,false);
-	}
+	foreach($imagesArray as $img) 
+		if(getUserObject($img['owner'])['status']!=2)
+			$ret=$ret.generateAlbumSquare($img,$rootPath,true,false);
 	$ret=$ret.'
                 </div>
             </div>
@@ -94,8 +92,8 @@ function generateUserAlbum($userID,$rootPath='.')
 }
 
 //Builds individual cards for each image associated with a user
-function generateAlbumSquare($pdo,$img,$rootPath='.', $viewImageButton=true,$deleteImageButton=false)
-{	if(isset($_SESSION['user_id'])&&($img['owner_ID']==$_SESSION['user_id'])) $deleteImageButton=true;
+function generateAlbumSquare($img,$rootPath='.', $viewImageButton=true,$deleteImageButton=false)
+{	if(isset($_SESSION['user_id'])&&($img['owner']==$_SESSION['user_id'])) $deleteImageButton=true;
 	else $deleteImageButton=false;
     $ret='
                     <div class="col mb-5">
@@ -115,14 +113,14 @@ function generateAlbumSquare($pdo,$img,$rootPath='.', $viewImageButton=true,$del
 $ret=$ret.'('.getRating($pdo,$img['ID']).') ';
     $ret=$ret.'</div>
                                     <!-- Product price-->
-                                    <a class="text-muted" href="user.php?id='.$img['owner_ID'].'">'. getUserName($pdo,$img['owner_ID']) .'</a>
+                                    <a class="text-muted" href="user.php?id='.$img['owner'].'">'. getUserObject($img['owner'])['name'] .'</a>
                                 </div>
                             </div>
                             <!-- Product actions-->
                             ';
                             if ($viewImageButton) $ret=$ret.'
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="' . './' . 'image.php?photoid=' . $img['ID'] . '">View image</a></div>
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="' . './' . 'image.php?photoid=' . $img['id'] . '">View image</a></div>
                             </div>';
                             if ($deleteImageButton) $ret=$ret.'
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
@@ -137,13 +135,14 @@ $ret=$ret.'('.getRating($pdo,$img['ID']).') ';
 
 
 
-//Selects one specific user from the JSON
-function getUserObject($lookup,$field='ID')
-{	$allUsers=importJSON('data/users.json');
-	foreach($allUsers as $user)
-		if($user[$field]==$lookup)
-			return $user;
-	return null;
+//Selects one specific user from the DB
+function getUserObject($pdo, $id){}
+{
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE ID = ?");
+        $stmt->execute([$id]);
+        $user = $stmt->fetch();
+
+    return $user ? $user : null;
 }
 
 //Gets the users name. Works with function above.
@@ -156,6 +155,7 @@ function getImageObject($lookup,$field='ID')
 }
 
 //Not sure what the difference is between this one and the one above.
+//CHANGE THIS FUNCTION TO PULL FROM DB
 function getImageObjects($lookup,$field='owner')
 {	$allImages=importJSON('data/images.json');
 	$ret=[];
@@ -343,99 +343,4 @@ function echoErrors($textArray)
   }
 }
 
-
-
-//SQL QUEREYS //////////////
-
-function createImage($pdo,$ownerID,$filename,$name)
-{	$stmt=$pdo->prepare('INSERT INTO images (owner_ID,filename,name,url) VALUES (?,?,?,?)');
-	$stmt->execute([$ownerID,$filename,$name,'data/images/'.$filename]);
-}
-function getImage($pdo,$id)
-{	$stmt=$pdo->prepare('SELECT * FROM images WHERE id=?');
-	$stmt->execute([$id]);
-	$ret=$stmt->fetch();
-	return $ret;
-}
-function updateImage($pdo,$id,$newName)
-{	$stmt=$pdo->prepare('UPDATE images SET name = ? WHERE ID = ?');
-	$stmt->execute([$newName,$id]);
-}
-function deleteImage($pdo,$id)
-{	$stmt=$pdo->prepare('DELETE FROM images WHERE id=?');
-	$stmt->execute([$id]);
-}
-
-// Takes an image ID and returns its rating, an average calculated from individual ratings
-function getRating($pdo,$imgID)
-{	$ret=0;
-	$stmt=$pdo->prepare('SELECT AVG(stars) AS star FROM ratings WHERE img_ID = ?;');
-	$stmt->execute([$imgID]);
-	$ret=$stmt->fetch();
-	return $ret['star'];
-}
-function leaveRating($pdo,$userID,$imgID,$stars=-1)
-{	$stmt=$pdo->prepare('DELETE FROM ratings WHERE user_ID = ? AND img_ID = ?;');
-	$stmt->execute([$userID,$imgID]);
-	
-	if($stars<0) return;
-	
-	$stmt=$pdo->prepare('INSERT INTO ratings (user_ID,img_ID,stars) VALUES (?,?,?);');
-	$stmt->execute([$userID,$imgID,$stars]);
-}
-
-
-
-function createGallery($pdo,$userID,$vis,$name,$desc)
-{	$stmt=$pdo->prepare('INSERT INTO galleries (owner_ID,visibility,name,description) VALUES (?,?,?,?);');
-	$stmt->execute([$userID,$vis,$name,$desc]);
-}
-function getGallery($pdo,$galID)
-{	$stmt=$pdo->prepare('SELECT * FROM galleries WHERE id=?');
-	$stmt->execute([$galID]);
-	$ret=$stmt->fetch();
-	return $ret;
-}
-function updateGallery($pdo,$galID,$vis=null,$name=null,$desc=null)
-{	$pre=getGallery($pdo,$galID);
-	if($vis==null)	$vis=$pre['visibility'];
-	if($name==null)	$name=$pre['name'];
-	if($desc==null)	$desc=$pre['description'];
-	$stmt=$pdo->prepare('UPDATE galleries SET visibility = ?, name=?, description=? WHERE ID = ?');
-	$stmt->execute([$vis,$name,$desc,$galID]);
-}
-function deleteGallery($pdo,$galID)
-{	$stmt=$pdo->prepare('DELETE FROM galleries WHERE id=?');
-	$stmt->execute([$galID]);
-}
-function addImgToGal($pdo,$imgID,$galID)
-{	$stmt=$pdo->prepare('INSERT INTO img_in_gal (image_id,gallery_ID) VALUES (?,?);');
-	$stmt->execute([$imgID,$galID]);
-}
-function getImagesFromGal($pdo,$galID)
-{	$stmt=$pdo->prepare('SELECT image_ID FROM img_in_gal WHERE gallery_ID=?');
-	$stmt->execute([$id]);
-	$ret=$stmt->fetch();
-	return $ret;
-}
-function removeImgToGal($pdo,$imgID,$galID)
-{	$stmt=$pdo->prepare('DELETE FROM img_in_gal WHERE image_id=? AND gallery_ID=?');
-	$stmt->execute([$imgID,$galID]);
-}
-
-
-
-// Returns all image IDs on the site
-function getImagesAll($pdo)
-{	$stmt=$pdo->prepare('SELECT ID FROM images');
-	$stmt->execute([]);
-	$ret=$stmt->fetchAll();
-	return $ret;
-}
-function getImagesFromUser($pdo,$userID)
-{	$stmt=$pdo->prepare('SELECT * FROM images WHERE user_id=?');
-	$stmt->execute([$id]);
-	$ret=$stmt->fetch();
-	return $ret;
-}
 ?>

@@ -1,4 +1,5 @@
 <?php
+<<<<<<< HEAD
 session_start();
 require_once('./header.php');
 require_once('./lib/imageHandling.php');
@@ -42,6 +43,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 
+=======
+
+session_start();
+require_once('./lib/functions.php');
+require_once('./lib/imageHandling.php');
+require_once('./header.php');
+
+if(!isset($_SESSION['user_id'])) header("Location: login.php");
+
+if (count($_FILES) > 0) {
+	$json = [
+        'id' => uniqid(),
+        'owner' => $_SESSION['user_id'],
+        'filename' => $_FILES['imageInput']['name'],
+        'name' => $_POST['nameInput'],
+        'rating' => 0,
+        'date' => time(),
+        'metadata' => [
+            'filesize' => $_FILES['imageInput']['size'],
+            'format' => $_FILES['imageInput']['type']
+        ]
+    ];
+
+    collectImage('imageInput', $_SESSION['user_id'], $json);
+}
+
+
+?>
+
+>>>>>>> 2c4588fa305e3873098c9468183810f6ddc8d011
 <?= echoHeader('Upload Image')?>
     <body>
     <section style="background-color: #eee;">

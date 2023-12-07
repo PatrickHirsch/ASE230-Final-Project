@@ -1,6 +1,7 @@
 [
     {
 <<<<<<< HEAD
+<<<<<<< HEAD
         "ID": "1279394321696948849",
         "name": "SarahRiley",
         "email": "rileys14@mymail.nku.edu",
@@ -41,6 +42,8 @@
         "dateJoined": 1699484623,
         "AlbumID": "12950634071699484623",
 =======
+=======
+>>>>>>> 2c4588fa305e3873098c9468183810f6ddc8d011
         "ID": "10582558411697340741",
         "name": "TestUser",
         "email": "testUser@gmail.com",
@@ -71,7 +74,10 @@
         "bio": "Woof",
         "userProfileImage": "",
         "AlbumID": "1201255341697345614",
+<<<<<<< HEAD
 >>>>>>> origin/master
+=======
+>>>>>>> 2c4588fa305e3873098c9468183810f6ddc8d011
         "status": "1"
     }
 ]

@@ -1,5 +1,4 @@
 <?php
-//This page allows a user to delete one of their photos
 session_start();
 require_once('header.php');
 require_once('./lib/imageHandling.php');
