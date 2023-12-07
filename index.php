@@ -25,4 +25,3 @@ else
 
 
 <?php 
-leaveRating($pdo,5,11,3);
