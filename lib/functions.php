@@ -437,13 +437,13 @@ function removeImgToGal($pdo,$imgID,$galID)
 
 // Returns all image IDs on the site
 function getImagesAll($pdo)
-{	$stmt=$pdo->prepare('SELECT ID FROM images');
+{	$stmt=$pdo->prepare('SELECT ID FROM images ORDER BY timestamp DESC');
 	$stmt->execute([]);
 	$ret=$stmt->fetchAll();
 	return $ret;
 }
 function getImagesFromUser($pdo,$userID)
-{	$stmt=$pdo->prepare('SELECT * FROM images WHERE user_id=?');
+{	$stmt=$pdo->prepare('SELECT * FROM images WHERE user_id=? ORDER BY timestamp DESC');
 	$stmt->execute([$id]);
 	$ret=$stmt->fetch();
 	return $ret;
