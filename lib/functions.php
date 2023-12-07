@@ -50,32 +50,37 @@ function generateAlbum($rootPath='.')
             <div class="container px-4 px-lg-5 mt-5">
                 <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                     ';
-    foreach ($imagesArray as $img)
-        $ret = $ret . generateAlbumSquare($img, $rootPath);
-    $ret = $ret . '
-
+	foreach($imagesArray as $img) 
+		if(getUserObject($img['owner'])['status']!=2)
+			$ret=$ret.generateAlbumSquare($img,$rootPath,true,false);
+	$ret=$ret.'
                 </div>
             </div>
         </section>
 	';
-    return $ret;
+	return $ret;
 }
 
 //Builds the section where user's photos should be displayed
 function generateUserAlbum($userID,$rootPath='.')
 {	$imagesArray=importJSON($rootPath.'/data/images.json');
-
-    $ret='
+	
+	$isAuthenticatedUser=false;
+	if(isset($_SESSION['user_id']))
+		if($_SESSION['user_id']==$userID)
+			$isAuthenticatedUser=true;
+	
+	$ret='
         <!-- Section-->
         <section class="py-5">
             <div class="container px-4 px-lg-5 mt-5">
                 <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                     ';
-    foreach($imagesArray as $img)
-        if($img['owner']==$userID)
-            $ret=$ret.generateAlbumSquare($img,$rootPath);
-
-    $ret=$ret.'
+	foreach($imagesArray as $img) 
+		if($img['owner']==$userID)
+			$ret=$ret.generateAlbumSquare($img,$rootPath,true,$isAuthenticatedUser);
+	
+	$ret=$ret.'
                 </div>
             </div>
         </section>
@@ -84,8 +89,9 @@ function generateUserAlbum($userID,$rootPath='.')
 }
 
 //Builds individual cards for each image associated with a user
-function generateAlbumSquare($img,$rootPath='.', $viewImageButton=true)
-{
+function generateAlbumSquare($img,$rootPath='.', $viewImageButton=true,$deleteImageButton=false)
+{	if(isset($_SESSION['user_id'])&&($img['owner']==$_SESSION['user_id'])) $deleteImageButton=true;
+	else $deleteImageButton=false;
     $ret='
                     <div class="col mb-5">
                         <div class="card h-100">
@@ -103,7 +109,7 @@ function generateAlbumSquare($img,$rootPath='.', $viewImageButton=true)
     for($star=1;$star<=$img['rating'];$star++)	$ret=$ret.'<div class="bi-star-fill"></div>';
     $ret=$ret.'</div>
                                     <!-- Product price-->
-                                    <a class="text-muted" href="user.php?id='.$img['owner'].'">'.getUserName($img['owner']).'</a>
+                                    <a class="text-muted" href="user.php?id='.$img['owner'].'">'. getUserObject($img['owner'])['name'] .'</a>
                                 </div>
                             </div>
                             <!-- Product actions-->
@@ -111,10 +117,12 @@ function generateAlbumSquare($img,$rootPath='.', $viewImageButton=true)
                             if ($viewImageButton) $ret=$ret.'
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
                                 <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="' . './' . 'image.php?photoid=' . $img['id'] . '">View image</a></div>
-                            </div>
+                            </div>';
+                            if ($deleteImageButton) $ret=$ret.'
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
                                 <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="' . './' . 'editImage.php?photoid=' . $img['id'] . '">Edit/Delete image</a></div>
-                            </div>
+                            </div>';
+	$ret=$ret.'
                         </div>
                     </div>
 	';
@@ -122,50 +130,44 @@ function generateAlbumSquare($img,$rootPath='.', $viewImageButton=true)
 }
 
 //Selects one specific user from the JSON
-function getUserObject($lookup, $field = 'ID')
-{
-    $allUsers = importJSON('data/users.json');
-    foreach ($allUsers as $user)
-        if ($user[$field] == $lookup)
-            return $user;
-
-    return null;
+function getUserObject($lookup,$field='ID')
+{	$allUsers=importJSON('data/users.json');
+	foreach($allUsers as $user)
+		if($user[$field]==$lookup)
+			return $user;
+	return null;
 }
+
 //Gets the users name. Works with function above.
-function getUserName($userID)
-{
-    return getUserObject($userID)['name'];
-}
-
-function getImageObject($lookup, $field = 'ID')
-{
-    $allImages = importJSON('data/images.json');
-    foreach ($allImages as $img)
-        if ($img[$field] == $lookup)
-
-            return $img;
-    return null;
+function getImageObject($lookup,$field='ID')
+{	$allImages=importJSON('data/images.json');
+	foreach($allImages as $img)
+		if($img[$field]==$lookup)
+			return $img;
+	return null;
 }
 
 //Not sure what the difference is between this one and the one above.
-function getImageObjects($lookup, $field = 'owner')
-{
-    $allImages = importJSON('data/images.json');
-    $ret = [];
-    foreach ($allImages as $img)
-        if ($img[$field] == $lookup)
-            $ret[] = $img;
-
-    return $ret;
+function getImageObjects($lookup,$field='owner')
+{	$allImages=importJSON('data/images.json');
+	$ret=[];
+	foreach($allImages as $img)
+		if($img[$field]==$lookup)
+			$ret[]=$img;
+	return $ret;
 }
 
 //gets users photos?
 function getUsersPhotos($userID)
-{
-    $allImages = importJSON('data/images.json');
-    //foreach image, if ownerID==userID add to $ret
-    return $allImages;
+{	$allImages=importJSON('data/images.json');
+	$ret=[];
+			//foreach image, if ownerID==userID add to $ret
+	foreach($allImages as $img)
+		if($img['owner']==$userID)
+			$ret[]=$img;
+	return $allImages;
 }
+
 
 //converts php time() to an actual time and date according to our local time.
 function convertTimeStamp($user)
@@ -199,7 +201,7 @@ function generateAdminUserCards($userData)
         echo '<div class="col mb-5">
                         <div class="card h-100">
                             <!-- User Profile image-->
-                            <img class="card-img-top" src="' . $user['userProfileImage'] . '" alt="Image of ' . $user['name'] . '" />
+                            <img class="card-img-top" src="' . getProfilePhoto($user['ID']) . '" alt="Image of ' . $user['name'] . '" />
                             <!-- User details-->
                             <div class="card-body p-4">
                                 <div class="text-center">
@@ -213,7 +215,7 @@ function generateAdminUserCards($userData)
                             </div>
                             <!-- User actions-->
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="adminEditUser.php?ID=' . $user['ID'] . '">Check out User</a></div>
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="adminEditUser.php?id=' . $user['ID'] . '">Check out User</a></div>
                             </div>
                             </form>
                         </div>
@@ -224,15 +226,17 @@ function generateAdminUserCards($userData)
 
 //generates user cards for index.php
 function generateUserCards($userData)
-{
+{	$ret="";
 
-    foreach ($userData as $user) {
-        $status = $user['status'];
-        if ($status == 1 || $status == 3) {
-            echo '<div class="col mb-5">
+    foreach ($userData as $user)
+	{	$status = $user['status'];
+		$profilePhoto=getProfilePhoto($user['ID']);
+		
+        if ($status == 1 || $status == 3)
+		{	$ret=$ret.'<div class="col mb-5">
                             <div class="card h-100">
                                 <!-- User Profile image-->
-                                <img class="card-img-top" src="' . $user['userProfileImage'] . '" alt="Image of ' . $user['name'] . '" />
+                                <img class="card-img-top rounded-circle" style="width: 200px;height: 200px;object-fit: cover;margin: auto;" src="' . $profilePhoto . '" alt="Image of ' . $user['name'] . '" />
                                 <!-- User details-->
                                 <div class="card-body p-4">
                                     <div class="text-center">
@@ -244,14 +248,22 @@ function generateUserCards($userData)
                                 </div>
                                 <!-- User actions-->
                                 <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                    <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="user.php?ID=' . $user['ID'] . '">Check out User</a></div>
+                                    <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="user.php?id=' . $user['ID'] . '">Check out User</a></div>
                                 </div>
                             </div>
                         </div>';
         }
 
     }
+	return $ret;
 }
+
+function getProfilePhoto($userID)
+{	$profilePhoto='data/profilePhotos/'.$userID;
+	if(!file_exists($profilePhoto)) $profilePhoto='data/profilePhotos/0';
+	return $profilePhoto;
+}
+
 //checks if a user has admin access. If user does not have admin access the are automatically logged out and session is distroyed.
 function checkIfAdmin($userData)
 {
@@ -273,25 +285,6 @@ function checkIfAdmin($userData)
         echo "<a href=\"login.php\">Back to Login</a> </br>";
         die('You are not logged in. Please Login before continuing');
     }
-}
-
-//displays any "success_messages" 
-function displaySessionMessage()
-{
-    // Check if the success parameter is present in the URL
-    if (isset($_SESSION['success_message'])) {
-        echo '<p style="color: green;">' . $_SESSION['success_message'] . '</p>';
-        unset($_SESSION['success_message']); // Clear the session variable
-    }
-}
-
-//handles the logout button from header.php
-function processLogout(){
-    if (isset($_POST['logout'])) {
-        session_destroy();
-        $_SESSION['success_message'] = 'You have successfully logged out.';
-        header('Location: login.php');
-}
 }
 
 

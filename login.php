@@ -1,6 +1,7 @@
 <?php
-//This page allows an exhisting user to log back into their account.
 session_start();
+require_once 'header.php';
+require_once 'lib/functions.php';
 
 // Check if the success parameter is present in the URL
 if (isset($_SESSION['success_message'])) {
@@ -20,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         //var_dump($email);
         //var_dump($password);
         // Read the user data from the JSON file
-        $userData = json_decode(file_get_contents('data/users.json'), true);
+        $userData = importJSON('data/users.json');
 
         // Loop through user data to find a matching user
         foreach ($userData as $user) {
@@ -28,21 +29,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Store user data in the session
                 $_SESSION['email'] = $email;
                 $_SESSION['user_name'] = $user['name'];
-                $_SESSION['user_id'] = $user['ID'];
-                $_SESSION['user_status'] = $user['status'];
+                $_SESSION['user_id']=$user['ID'];
+                $_SESSION['user_status']=$user['status'];
 
-                if (!($_SESSION['user_status'] == 1 || $_SESSION['user_status'] == 3)) {
-                    if ($_SESSION['user_status'] == 0) {
+                if($_SESSION['user_status'] != 1 || $_SESSION['user_status'] != 3 ){
+                    if($_SESSION['user_status'] == 0){
                         echo "Your account has been deleted. Would you like to restore your account?<br>
                         <form method=\"POST\" action=\"\">
                         <input type=\"hidden\" name=\"email\" value=\"$email\">
                             <input type=\"hidden\" name=\"password\" value=\"$password\">
-                            <button name=\"restore\" type=\"submit\">Restore Account</button>
-                            </form>";
+                            <button name=\"restore\" type=\"submit\">Restore Account</button></form>";
                         die();
 
                     }
-                    if ($_SESSION['user_status'] == -1) {
+                    if($_SESSION['user_status'] == -1){
                         die("Your account has been removed by admin.");
                     }
                 }
@@ -51,19 +51,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 header('Location: user.php');
                 exit();
             }
-            if (isset($_POST['restore'])) {
-                $restoredEmail = $_POST['email'];
-                $restoredPassword = $_POST['password'];
+                if (isset($_POST['restore'])) {
+                    $restoredEmail = $_POST['email'];
+                    $restoredPassword = $_POST['password'];
 
-                foreach ($userData as &$user) {
-                    if ($user['email'] === $restoredEmail && password_verify($restoredPassword, $user['password'])) {
-                        $user['status'] = "1";
-                        file_put_contents('data/users.json', json_encode($userData, JSON_PRETTY_PRINT));
-                        $_SESSION['success_message'] = "Your account has been restored. Please login.";
+                    foreach ($userData as &$user) {
+                        if ($user['email'] === $restoredEmail && password_verify($restoredPassword, $user['password'])) {
+                            $user['status']= "1";
+                            //var_dump($user);
+                            writeJSON($userData,'data/users.json');
+							//var_dump($userData);
+                            $_SESSION['success_message'] = "Your account has been restored. Please login.";
+                        }
                     }
+                    header('Location: login.php');
                 }
-                header('Location: login.php');
-            }
         }
 
         // If no matching user is found, display an error message
@@ -72,17 +74,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 ?>
-
+<?= echoHeader('User Login') ?>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>User Login</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 </head>
 
 <body>
-    <section class="vh-100" style="background-color: #eee;">
+    <section style="background-color: #eee;">
         <div class="container h-100">
             <div class="row d-flex justify-content-center align-items-center h-100">
                 <div class="col-lg-12 col-xl-11">
@@ -93,15 +94,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
                                         <!-- Email input -->
                                         <div class="form-outline mb-4">
-                                            <input type="email" id="form2Example1" name='email' class="form-control" />
                                             <label class="form-label" for="form2Example1">Email address</label>
+                                            <input type="email" id="form2Example1" name='email' class="form-control" />
                                         </div>
 
                                         <!-- Password input -->
                                         <div class="form-outline mb-4">
+                                            <label class="form-label" for="form2Example2">Password</label>
                                             <input type="password" id="form2Example2" name='password'
                                                 class="form-control" />
-                                            <label class="form-label" for="form2Example2">Password</label>
                                         </div>
 
                                         <!-- 2 column grid layout for inline styling -->
@@ -118,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                                             <div class="col">-->
                                                 <!-- Simple link -->
-                                                <a href="#!">Forgot password?</a>
+                                                <!-- a href="#!">Forgot password?</a> -->
                                             </div>
                                         </div>
 
@@ -145,3 +146,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
 </body>
+
+<?= echoFooter(); ?>

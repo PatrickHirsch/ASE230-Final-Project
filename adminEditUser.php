@@ -1,14 +1,10 @@
 <?php
-//this page allows an admin to see all photos of a user and change the status of a user. Only active (1) and Banned (-1) user's statuses can be changed.
 session_start();
 require_once 'header.php';
 require_once 'lib/functions.php';
-$userData = json_decode(file_get_contents('data/users.json'), true);
+$userData=importJSON('data/users.json');
 checkIfAdmin($userData);
 
-//display any session messages
-displaySessionMessage();
-processLogout();
 
 if (isset($_GET['id'])) {
     $thisUser = getUserObject($_GET['id']);
@@ -30,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Save the updated user data to the JSON file
-        file_put_contents('data/users.json', json_encode($userData, JSON_PRETTY_PRINT));
+        writeJSON($userData,'data/users.json');
 
         $_SESSION['success_message'] = "This User has been activated.";
         header('Location: adminEditUser.php?id=' . $thisUser['ID']);
@@ -45,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Save the updated user data to the JSON file
-        file_put_contents('data/users.json', json_encode($userData, JSON_PRETTY_PRINT));
+        writeJSON($userData,'data/users.json');
 
         $_SESSION['success_message'] = "This User has been banned.";
         header('Location: adminEditUser.php?id=' . $thisUser['ID']);
@@ -97,7 +93,7 @@ switch ($status) {
         </form>
     </div>
     <div class="d-flex justify-content-end">
-        <a href="index.php"><button name="toIndex" type="submit">Back to Index</button></a>
+        <a href="admin.php"><button name="toIndex" type="submit">Back to Admin Dashboard</button></a>
     </div>
 </div>
 

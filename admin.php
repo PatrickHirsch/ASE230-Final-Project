@@ -1,4 +1,5 @@
 <?php
+<<<<<<< HEAD
 //This page shows an admin all the users on the site (both active and non-active). Admins can select a user to go to the admin edit page to change a users status.
 //Start session
 session_start();
@@ -9,13 +10,26 @@ require_once 'header.php';
 
 displaySessionMessage();
 processLogout();
+=======
+
+//Start session
+session_start();
+require_once('lib/functions.php');
+require_once 'header.php';
+
+$userData = importJSON('data/users.json');
+
+>>>>>>> origin/master
 
 //Check if user logged in is Admin (status 3)
 checkIfAdmin($userData);
 
 
+<<<<<<< HEAD
 //Diplay any Session Messages
 displaySessionMessage();
+=======
+>>>>>>> origin/master
 echo echoHeader('Admin Index');?>
     <!-- Section-->
     <section class="py-5">
@@ -26,6 +40,10 @@ echo echoHeader('Admin Index');?>
         </div>
     </section>
     <!-- Footer-->
+<<<<<<< HEAD
 
 <?= echoFooter();?>
 
+=======
+<?= echoFooter();?>
+>>>>>>> origin/master
