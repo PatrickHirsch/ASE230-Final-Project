@@ -138,13 +138,14 @@ function generateAlbumSquare($img,$rootPath='.', $viewImageButton=true,$deleteIm
 
 
 
-//Selects one specific user from the JSON
-function getUserObject($lookup,$field='ID')
-{	$allUsers=importJSON('data/users.json');
-	foreach($allUsers as $user)
-		if($user[$field]==$lookup)
-			return $user;
-	return null;
+//Selects one specific user from the DB
+function getUserObject($pdo, $id){}
+{
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE ID = ?");
+        $stmt->execute([$id]);
+        $user = $stmt->fetch();
+
+    return $user ? $user : null;
 }
 
 //Gets the users name. Works with function above.
@@ -157,6 +158,7 @@ function getImageObject($lookup,$field='ID')
 }
 
 //Not sure what the difference is between this one and the one above.
+//CHANGE THIS FUNCTION TO PULL FROM DB
 function getImageObjects($lookup,$field='owner')
 {	$allImages=importJSON('data/images.json');
 	$ret=[];
