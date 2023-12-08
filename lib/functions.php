@@ -56,7 +56,7 @@ function generateAlbum($pdo,$rootPath='.')
                     ';
 	foreach($imagesArray as $img) 
 		if(getUserObject($pdo,$img['owner'])['status']!=2)
-			$ret=$ret.generateAlbumSquare($img,$rootPath,true,false);
+			$ret=$ret.generateAlbumSquare($pdo,$img,$rootPath,true,false);
 	$ret=$ret.'
                 </div>
             </div>
@@ -66,7 +66,7 @@ function generateAlbum($pdo,$rootPath='.')
 }
 
 //Builds the section where user's photos should be displayed
-function generateUserAlbum($userID,$rootPath='.')
+function generateUserAlbum($pdo,$userID,$rootPath='.')
 {	$imagesArray=importJSON($rootPath.'/data/images.json');
 	
 	$isAuthenticatedUser=false;
@@ -82,7 +82,7 @@ function generateUserAlbum($userID,$rootPath='.')
                     ';
 	foreach($imagesArray as $img) 
 		if($img['owner']==$userID)
-			$ret=$ret.generateAlbumSquare($img,$rootPath,true,$isAuthenticatedUser);
+			$ret=$ret.generateAlbumSquare($pdo,$img,$rootPath,true,$isAuthenticatedUser);
 	
 	$ret=$ret.'
                 </div>
@@ -93,7 +93,7 @@ function generateUserAlbum($userID,$rootPath='.')
 }
 
 //Builds individual cards for each image associated with a user
-function generateAlbumSquare($img,$rootPath='.', $viewImageButton=true,$deleteImageButton=false)
+function generateAlbumSquare($pdo,$img,$rootPath='.', $viewImageButton=true,$deleteImageButton=false)
 {	if(isset($_SESSION['user_id'])&&($img['owner']==$_SESSION['user_id'])) $deleteImageButton=true;
 	else $deleteImageButton=false;
     $ret='
@@ -114,7 +114,7 @@ function generateAlbumSquare($img,$rootPath='.', $viewImageButton=true,$deleteIm
 $ret=$ret.'('.getRating($pdo,$img['ID']).') ';
     $ret=$ret.'*/'</div>
                                     <!-- Product price-->
-                                    <a class="text-muted" href="user.php?id='.$img['owner'].'">'. getUserObject($img['owner'])['name'] .'</a>
+                                    <a class="text-muted" href="user.php?id='.$img['owner'].'">'. getUserObject($pdo,$img['owner'])['name'] .'</a>
                                 </div>
                             </div>
                             <!-- Product actions-->
@@ -125,7 +125,7 @@ $ret=$ret.'('.getRating($pdo,$img['ID']).') ';
                             </div>';
                             if ($deleteImageButton) $ret=$ret.'
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="' . './' . 'editImage.php?photoid=' . $img['ID'] . '">Edit/Delete image</a></div>
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="' . './' . 'editImage.php?photoid=' . $img['id'] . '">Edit/Delete image</a></div>
                             </div>';
 	$ret=$ret.'
                         </div>
@@ -137,7 +137,7 @@ $ret=$ret.'('.getRating($pdo,$img['ID']).') ';
 
 
 //Selects one specific user from the DB
-function getUserObject($pdo, $id='ID')
+function getUserObject($pdo, $id)
 {
         $stmt =$pdo->prepare("SELECT *  FROM users WHERE ID = ?");
         $stmt->execute([$id]);

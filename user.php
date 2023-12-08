@@ -41,7 +41,7 @@ $theseImages = getUsersPhotos($thisUser['ID']);
         </div>
     </div>
     <hr>
-    <?= generateUserAlbum($thisUser['ID']); ?>
+    <?= generateUserAlbum($pdo,$thisUser['ID']); ?>
 </div>
 		
 <?= echoFooter() ?>
