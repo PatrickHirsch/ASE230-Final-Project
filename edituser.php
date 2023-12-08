@@ -2,19 +2,54 @@
 session_start();
 require_once 'header.php';
 require_once 'lib/functions.php';
+require_once('db/db.php');
 
 
 
-if($_SERVER['REQUEST_METHOD']==='POST')
-{	
-	//	echo '<pre>';
-	//	var_dump($_FILES['profilePhoto']);
-	//	die();
-	
-	$allUsers=importJSON('data/users.json');
+	$stmt = $pdo->prepare("SELECT ID, name, email, password, profile_image, status FROM users where ID = ? ");
+    $updateStmt = $pdo->prepare('UPDATE users SET status = ?, password = ?, name = ?, bio = ? WHERE ID = ?');
+    $thisUser=getUserObject($pdo,$_SESSION['user_id']);
+	$allUsers= getAllUsers($pdo);
 	$authenticatedUser=$_SESSION['user_id'];
+
+    $authenticatedUser = $_SESSION['user_id'];
+    if($_SERVER['REQUEST_METHOD']==='POST')
+{
+    $stmt->execute([$authenticatedUser]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if ($user) {
+        // Simple validity checks and update user information
+        
+        if ($user['email'] !== $_POST['email']) {
+            echo die('Authentication fail.');
+        }
+
+        if ($_POST['password'] !== "") {
+            if ($_POST['password'] !== $_POST['passwordRepeat']) {
+                die("Validated password does not match");
+            }
+            $hashedPassword = password_hash($_POST['password'], PASSWORD_BCRYPT);
+            $updateStmt->execute([$user['status'], $hashedPassword, $_POST['userName'], $_POST['bioName'], $authenticatedUser]);
+        } else {
+            $updateStmt->execute([$user['status'], $user['password'], $_POST['userName'], $_POST['bioName'], $authenticatedUser]);
+        }
+
+        // Handle file uploads
+        if ($_FILES['profilePhoto']['error'] == 0) {
+            $isImage = ['image/jpeg', 'image/png', 'image/gif'];
+            //var_dump($isImage);
+            if (in_array($_FILES['profilePhoto']['type'], $isImage) && $_FILES['profilePhoto']['size'] <= 2000000) {
+                $filePath = 'data/profilePhotos/' . $user['ID'] . '.' . pathinfo($_FILES['profilePhoto']['name'], PATHINFO_EXTENSION);
+                move_uploaded_file($_FILES['profilePhoto']['tmp_name'], $filePath);
+                // Update file path in database if needed
+                $pdo->prepare("UPDATE users SET profile_image = ? WHERE ID = ?")->execute([$filePath, $authenticatedUser]);
+
+            }
+        }
+        
 	
-	for($i=0;$i<count($allUsers);$i++)
+	/*for($i=0;$i<count($allUsers);$i++)
 	{	if($allUsers[$i]['ID']==$_SESSION['user_id'])
 		{	// Simple validity check
 			if($allUsers[$i]['email']!=$_POST['email'])
@@ -50,12 +85,13 @@ if($_SERVER['REQUEST_METHOD']==='POST')
 
 	writeJSON($allUsers,'data/users.json');
 	header("Location: user.php");
-	die();
+	die();*/
 }
 else
-{	if(isset($_SESSION['user_id'])) $thisUser=getUserObject($_SESSION['user_id']);
+{	if(isset($_SESSION['user_id'])) $thisUser=getUserObject($pdo,$_SESSION['user_id']);
 	else header("Location: login.php");
 }
+}}
 ?>
 
 <?= echoHeader('Edit User: ',$thisUser['name']) ?>
@@ -93,7 +129,7 @@ else
                                         <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                                         <div class="form-outline flex-fill mb-0">
                                             <label class="form-label" for="profilePhoto">Profile Photo</label>
-                                            <br><img src="<?= getProfilePhoto($thisUser['ID']) ?>" style="width:100px">
+                                            <br><img src="<?= getProfilePhoto($pdo,$_SESSION['user_id']) ?>" style="width:100px">
 											<input type="file" id="profilePhoto" name="profilePhoto" class="form-control" />
                                         </div>
                                     </div>

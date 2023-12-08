@@ -145,6 +145,15 @@ function getUserObject($pdo, $id)
 
     return (object) $user ? $user : null;
 }
+//Selects all users from the DB
+function getAllUsers($pdo)
+{
+        $stmt =$pdo->prepare("SELECT *  FROM users");
+        $stmt->execute();
+        $users = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    return (object) $users ? $users : null;
+}
 
 //Gets the users name. Works with function above.
 function getImageObject($lookup,$field='ID')
@@ -214,7 +223,7 @@ function generateAdminUserCards($pdo)
       echo '<div class="col mb-5">
                       <div class="card h-100">
                           <!-- User Profile image-->
-                          <img class="card-img-top" src="' . getProfilePhoto($user['ID']) . '" alt="Image of ' . $user['name'] . '" />
+                          <img class="card-img-top" src="' . getProfilePhoto($pdo,$user['ID']) . '" alt="Image of ' . $user['name'] . '" />
                           <!-- User details-->
                           <div class="card-body p-4">
                               <div class="text-center">
@@ -254,7 +263,7 @@ function generateAdminUserCards($pdo)
         echo '<div class="col mb-5">
                         <div class="card h-100">
                             <!-- User Profile image-->
-                            <img class="card-img-top" src="' . getProfilePhoto($user['ID']) . '" alt="Image of ' . $user['name'] . '" />
+                            <img class="card-img-top" src="' . getProfilePhoto($pdo,$user['ID']) . '" alt="Image of ' . $user['name'] . '" />
                             <!-- User details-->
                             <div class="card-body p-4">
                                 <div class="text-center">
@@ -278,12 +287,12 @@ function generateAdminUserCards($pdo)
 }
 
 //generates user cards for index.php
-function generateUserCards($userData)
+function generateUserCards($pdo,$userData)
 {	$ret="";
 
     foreach ($userData as $user)
 	{	$status = $user['status'];
-		$profilePhoto=getProfilePhoto($user['ID']);
+		$profilePhoto=getProfilePhoto($pdo,$user['ID']);
 		
         if ($status == 1 || $status == 3)
 		{	$ret=$ret.'<div class="col mb-5">
@@ -311,10 +320,18 @@ function generateUserCards($userData)
 	return $ret;
 }
 
-function getProfilePhoto($userID)
-{	$profilePhoto='data/profilePhotos/'.$userID;
-	if(!file_exists($profilePhoto)) $profilePhoto='data/profilePhotos/0';
-	return $profilePhoto;
+function getProfilePhoto($pdo, $userID)
+{
+    $stmt = $pdo->prepare("SELECT profile_image FROM users WHERE ID = ?");
+    $stmt->execute([$userID]);
+    $profilePhoto = $stmt->fetch(PDO::FETCH_ASSOC);
+    $filePath = isset($profilePhoto['profile_image']) ? $profilePhoto['profile_image'] : 'data/profilePhotos/0';
+    
+    if (!file_exists($filePath)) {
+        $filePath = 'data/profilePhotos/0';
+    }
+    
+    return $filePath;
 }
 
 //checks if a user has admin access. If user does not have admin access the are automatically logged out and session is distroyed.
