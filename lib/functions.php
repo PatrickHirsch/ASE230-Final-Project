@@ -1,4 +1,5 @@
 <?php
+require_once('db/db.php');
 
 function getUserName($pdo, $id) {
   $stmt = $pdo->prepare("SELECT name FROM users WHERE ID = ?");
@@ -54,7 +55,7 @@ function generateAlbum($pdo,$rootPath='.')
                 <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                     ';
 	foreach($imagesArray as $img) 
-		if(getUserObject($img['owner'])['status']!=2)
+		if(getUserObject($pdo,$img['owner'])['status']!=2)
 			$ret=$ret.generateAlbumSquare($img,$rootPath,true,false);
 	$ret=$ret.'
                 </div>
@@ -109,9 +110,9 @@ function generateAlbumSquare($img,$rootPath='.', $viewImageButton=true,$deleteIm
                                     <h5 class="fw-bolder">'.$img['name'].'</h5>
                                     <!-- Product reviews-->
                                     <div class="d-flex justify-content-center small text-warning mb-2">';
-	for($star=1;$star<=getRating($pdo,$img['ID']);$star++)	$ret=$ret.'<div class="bi-star-fill"></div>';
+	/*for($star=1;$star<=getRating($pdo,$img['ID']);$star++)	$ret=$ret.'<div class="bi-star-fill"></div>';
 $ret=$ret.'('.getRating($pdo,$img['ID']).') ';
-    $ret=$ret.'</div>
+    $ret=$ret.'*/'</div>
                                     <!-- Product price-->
                                     <a class="text-muted" href="user.php?id='.$img['owner'].'">'. getUserObject($img['owner'])['name'] .'</a>
                                 </div>
@@ -136,13 +137,13 @@ $ret=$ret.'('.getRating($pdo,$img['ID']).') ';
 
 
 //Selects one specific user from the DB
-function getUserObject($pdo, $id){}
+function getUserObject($pdo, $id='ID')
 {
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE ID = ?");
+        $stmt =$pdo->prepare("SELECT *  FROM users WHERE ID = ?");
         $stmt->execute([$id]);
-        $user = $stmt->fetch();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    return $user ? $user : null;
+    return (object) $user ? $user : null;
 }
 
 //Gets the users name. Works with function above.

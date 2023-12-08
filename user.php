@@ -2,14 +2,16 @@
 session_start();
 require_once 'header.php';
 require_once 'lib/functions.php';
-require_once './db/db.php';
+require_once 'db/db.php';
 
+$stmt = $pdo->prepare("SELECT ID, name, status FROM users where ID = ? ");
+$updateStmt = $pdo->prepare('UPDATE users SET status = ? WHERE id = ?');
 $thisUser = null;
 
 if (isset($_GET['id'])) {
-    $thisUser = getUserObject($_GET['id']);
+    $thisUser = getUserObject($pdo,$_GET['id']);
 } else if (isset($_SESSION['user_id'])) {
-    $thisUser = getUserObject($_SESSION['user_id']);
+    $thisUser = getUserObject($pdo,$_SESSION['user_id']);
 }
 
 // If the user's status is neither 1 nor 3, set $thisUser to null

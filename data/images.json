@@ -1,1 +1,15 @@
-[]
+[
+    {
+        "id": "657252cf0e3d1",
+        "owner": 5,
+        "filename": "image_1xjdnOmD_1697684090792_raw.jpg",
+        "name": "Groovy!",
+        "rating": 0,
+        "date": 1701991119,
+        "metadata": {
+            "filesize": 446839,
+            "format": "image\/jpeg"
+        },
+        "url": "data\/users\/5\/image_657252cf0e3d1.jpg"
+    }
+]

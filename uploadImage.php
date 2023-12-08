@@ -1,49 +1,4 @@
 <?php
-<<<<<<< HEAD
-session_start();
-require_once('./header.php');
-require_once('./lib/imageHandling.php');
-
-class ImageUploader {
-    private $userId;
-
-    public function __construct($userId) {
-        $this->userId = $userId;
-    }
-
-    public function uploadImage($imageInput, $nameInput) {
-        if (count($_FILES) > 0) {
-            $imageData = [
-                'id' => uniqid(),
-                'owner' => $this->userId,
-                'filename' => $_FILES[$imageInput]['name'],
-                'name' => $nameInput,
-                'rating' => 0,
-                'date' => time(),
-                'metadata' => [
-                    'filesize' => $_FILES[$imageInput]['size'],
-                    'format' => $_FILES[$imageInput]['type']
-                ]
-            ];
-
-            collectImage($imageInput, $this->userId, $imageData);
-        }
-    }
-}
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $userId = $_SESSION['user_id'];
-
-    if (isset($_POST['nameInput'])) {
-        $nameInput = $_POST['nameInput'];
-        $uploader = new ImageUploader($userId);
-        $uploader->uploadImage('imageInput', $nameInput);
-    }
-}
-?>
-
-
-=======
 
 session_start();
 require_once('./lib/functions.php');
@@ -72,7 +27,6 @@ if (count($_FILES) > 0) {
 
 ?>
 
->>>>>>> 2c4588fa305e3873098c9468183810f6ddc8d011
 <?= echoHeader('Upload Image')?>
     <body>
     <section style="background-color: #eee;">
