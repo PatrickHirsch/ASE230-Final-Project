@@ -11,6 +11,7 @@ $updateStmt = $pdo->prepare('UPDATE users SET status = ?, password = ?, name = ?
 $thisUser = getUserObject($pdo, $_SESSION['user_id']);
 $allUsers = getAllUsers($pdo);
 $authenticatedUser = $_SESSION['user_id'];
+displaySessionMessage();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute([$authenticatedUser]);
@@ -44,55 +45,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 }
             }
-
-                
-
-
-                /*for($i=0;$i<count($allUsers);$i++)
-                   {	if($allUsers[$i]['ID']==$_SESSION['user_id'])
-                       {	// Simple validity check
-                           if($allUsers[$i]['email']!=$_POST['email'])
-                               echo die('Authentication fail.');
-                           
-                           // If Password field is not left empty, update password
-                           if(($_POST['password']!==""))
-                           {	if(($_POST['password']!==$_POST['passwordRepeat']))
-                               {	die("Validated password does not match");
-                               }
-                               $allUsers[$i]['password']=password_hash($_POST['password'], PASSWORD_BCRYPT);
-                           }
-                           
-                           // Update Name
-                           if($_POST['userName']!=="") $allUsers[$i]['name']=$_POST['userName'];
-                           
-                           // Update Bio
-                           $allUsers[$i]['bio']=$_POST['bioName'];	
-                           
-                           // Update Profile Image
-                           if($_FILES['profilePhoto']['error']==0)
-                           {	$isImage=['image/jpeg','image/png','image/gif'];
-                                   var_dump($_FILES['profilePhoto']);
-                               if
-                               (	in_array($_FILES['profilePhoto']['type'],$isImage) &&
-                                   $_FILES['profilePhoto']['size']<=2000000
-                               )	
-                                   move_uploaded_file($_FILES['profilePhoto']['tmp_name'],'data/profilePhotos/'.$allUsers[$i]['ID']);
-                                   //die('Here');
-                           }
-                       }
-                   }
-
-                   writeJSON($allUsers,'data/users.json');
-                   header("Location: user.php");
-                   die();*/
-            } else {
-                if (isset($_SESSION['user_id']))
-                    $thisUser = getUserObject($pdo, $_SESSION['user_id']);
-                else
-                    header("Location: login.php");
-            }
+        } else {
+            if (isset($_SESSION['user_id']))
+                $thisUser = getUserObject($pdo, $_SESSION['user_id']);
+            else
+                header("Location: login.php");
         }
     }
+    $_SESSION['success_message'] = 'Your account was successfully updated';
+}
 
 ?>
 
@@ -184,15 +145,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
                                             <button id="update" type="submit"
                                                 class="btn btn-primary btn-lg">Update</button>
-</div>
-</form>
+                                        </div>
+                                    </form>
                                     <div>
-                                            <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                                                <a href="removeuser.php"><button id="delete" class="btn btn-primary btn-lg">Delete
+                                        <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
+                                            <a href="removeuser.php"><button id="delete"
+                                                    class="btn btn-primary btn-lg">Delete
                                                     Account</button></a>
-                                            </div>
-
-</div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

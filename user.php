@@ -25,8 +25,8 @@ if ($thisUser == null) {
     exit(); // Stop further execution of the script
 }
 
-// Assuming getUsersPhotos function and other functions are properly defined elsewhere
-$theseImages = getUsersPhotos($thisUser['ID']);
+// Assuming getImagesFromUser
+$theseImages = getImagesFromUser($pdo,$thisUser['ID']);
 ?>
 
 <?= echoHeader($thisUser['name'] . '\'s Profile', $thisUser['bio']) ?>
@@ -41,7 +41,22 @@ $theseImages = getUsersPhotos($thisUser['ID']);
         </div>
     </div>
     <hr>
-    <?= generateUserAlbum($pdo,$thisUser['ID']); ?>
+    
+    <?php
+$theseImages = getImagesFromUser($pdo, $thisUser['ID']);
+
+// Check if $theseImages is an array or object before processing
+if (is_array($theseImages) || is_object($theseImages)) {
+    $singleImages = [];
+    foreach ($theseImages as $Image) {
+        $singleImages[] = (array) $Image;
+        generateAlbumSquare($pdo, $singleImages);
+    }
+} else {
+    // Handle the case where getImagesFromUser() returns false or unexpected value
+    echo "No images found."; // Or any appropriate error message
+}
+?>
 </div>
 		
 <?= echoFooter() ?>
