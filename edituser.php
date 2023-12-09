@@ -12,14 +12,12 @@ $thisUser = getUserObject($pdo, $_SESSION['user_id']);
 $allUsers = getAllUsers($pdo);
 $authenticatedUser = $_SESSION['user_id'];
 
-$authenticatedUser = $_SESSION['user_id'];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute([$authenticatedUser]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($user) {
             // Simple validity checks and update user information
-
             if ($user['email'] !== $_POST['email']) {
                 echo die('Authentication fail.');
             }
@@ -46,20 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 }
             }
-            if (isset($_POST['delete_account'])) {
-                echo '<form method="post" onsubmit="return confirm("Are you sure you want to perform this operation?");">
-            <input name="cancel" type="submit" name="confirmed" value="Cancel">
-            <input name="confirm" type="submit" name="confirmed" value="Delete Account">
-        </form>';
-                if (isset($_POST['confirm'])) {
-                    $pdo->prepare("UPDATE users SET status = 0 WHERE ID = ?")->execute([$user['status'], $authenticatedUser]);
-                    $_SESSION['success_message'] = 'Your account has been successfully removed. Please login to restore.';
-                    header("Location: logout.php");
 
-                }
-                if (isset($_POST['cancel'])) {
-                    header("Location: edituser.php");
-                }
+                
 
 
                 /*for($i=0;$i<count($allUsers);$i++)
@@ -107,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
-}
+
 ?>
 
 <?= echoHeader('Edit User: ', $thisUser['name']) ?>
@@ -198,15 +184,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
                                             <button id="update" type="submit"
                                                 class="btn btn-primary btn-lg">Update</button>
-                                        </div>
-                                        <form name="delete_account" method="POST">
+</div>
+</form>
+                                    <div>
                                             <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
-                                                <button id="delete" type="submit" class="btn btn-primary btn-lg">Delete
-                                                    Account</button>
+                                                <a href="removeuser.php"><button id="delete" class="btn btn-primary btn-lg">Delete
+                                                    Account</button></a>
                                             </div>
-                                        </form>
 
-                                    </form>
+</div>
                                 </div>
                             </div>
                         </div>

@@ -88,7 +88,7 @@ switch ($status) {
 
 
 <hr>
-<?= generateUserAlbum($thisUser['ID']); ?>
+<?= generateUserAlbum($pdo,$thisUser['ID']); ?>
 
 <!-- pre><?= print_r($theseImages); ?></pre>
 <pre><?= print_r($thisUser); ?></pre>
