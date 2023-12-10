@@ -9,6 +9,7 @@ $stmt = $pdo->prepare("SELECT * FROM comments where image_ID = ?");
 $InsertStmt = $pdo ->prepare('INSERT INTO comments (ID, user_ID, image_ID,message,timestamp) VALUES (?, ?, ?,?,?)');
 $isError=null;
 
+displaySessionMessage();
 
 if(!isset($_GET['photoid']))
 {	$isError='the photo id is invalid';

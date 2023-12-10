@@ -384,6 +384,7 @@ function fillComment($pdo, $comment) {
     $posterProfileImage = getProfilePhoto($pdo, $comment['user_ID']);
     $posterName = getUserName($pdo, $comment['user_ID']);
     $commentText = $comment['message'];
+    $commentID = $comment['ID'];
 
     echo '<div class="container">
         <div class="media">
@@ -391,8 +392,16 @@ function fillComment($pdo, $comment) {
             <div class="media-body">
                 <h5 class="mt-0">' . $posterName . '</h5>
                 <p>' . $commentText . '</p>
-            </div>
-        </div>
+            </div>';
+            if($comment['user_ID']=== $_SESSION['user_id']){
+                echo '<div>
+                <form method="GET" action="editcomment.php">
+                <input type="hidden" name="commentid" value="' . $commentID . '">
+                <button type="submit" class="btn btn-primary">Edit Comment</button>
+                </form>
+                </div>';
+            }
+        echo '</div>
         <hr>
     </div>';
 }
@@ -513,6 +522,14 @@ function getUserObject($pdo, $id)
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     return (object) $user ? $user : null;
+}
+function getComment($pdo, $id)
+{
+        $stmt =$pdo->prepare("SELECT *  FROM comments WHERE ID = ?");
+        $stmt->execute([$id]);
+        $comment = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    return (object) $comment ? $comment : null;
 }
 
 
