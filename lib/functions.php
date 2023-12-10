@@ -350,10 +350,11 @@ function displaySessionMessage(){
 
 function commentSectionForm($pdo, $selectedImage, $user){
     echo '<div>
-    <form>
+    <form method="POST">
     <div class="form-group">
     <label for="addCommentSection">Comment:</label>
-    <textarea class="form-control" id="commentTextarea" rows="3"></textarea>
+    <input type="hidden" name="photoid" value="'.$selectedImage['ID'].'">
+    <textarea class="form-control" name="message" id="commentTextarea" rows="3"></textarea>
   </div>
 
   <button type="submit" class="btn btn-primary">Submit</button>
@@ -361,8 +362,44 @@ function commentSectionForm($pdo, $selectedImage, $user){
     </div>';
 }
 
-function generateCommentSection($pdo, $selectedImage, $user){
+function generateCommentSection($pdo, $selectedImage) {
+    $stmt = $pdo->prepare('SELECT * FROM comments WHERE image_id = ?');
+    $stmt->execute([$selectedImage['ID']]);
+    $thisImageComments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    if ($thisImageComments) {
+        foreach ($thisImageComments as $comment) {
+            echo '<div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">';
+            fillComment($pdo, $comment);
+            echo '</li>
+                </ul>
+            </div>';
+        }
+    }
 }
+
+function fillComment($pdo, $comment) {
+    $posterProfileImage = getProfilePhoto($pdo, $comment['user_ID']);
+    $posterName = getUserName($pdo, $comment['user_ID']);
+    $commentText = $comment['message'];
+
+    echo '<div class="container">
+        <div class="media">
+            <img class="align-self-start mr-3 rounded-circle" src="' . $posterProfileImage . '" alt="Profile Image" width="10%" height="10%">
+            <div class="media-body">
+                <h5 class="mt-0">' . $posterName . '</h5>
+                <p>' . $commentText . '</p>
+            </div>
+        </div>
+        <hr>
+    </div>';
+}
+
+
+
+
 
 //SQL QUEREYS //////////////
 
