@@ -6,6 +6,9 @@ require_once 'db/db.php';
 
 
 $errors = [];
+if (!isset($_SESSION['user_id'])) {
+    header('Location: index.php');
+}
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if (count($_POST) > 0) {
     if (
@@ -44,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                                 <?= echoErrors($errors); ?>
                                 <?php 
-                                if (count($errors) === 0) {
+                                if (count($errors) === 0 && count($_POST) > 0) {
                                   echo 'Gallery created Successfully';
                                 }
                                 ?>
