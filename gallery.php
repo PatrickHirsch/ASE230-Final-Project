@@ -5,9 +5,12 @@ require_once 'header.php';
 require_once 'lib/functions.php';
 require_once './db/db.php';
 
+function generateGallery() {
+  echo '<button class="btn btn-outline-dark mt-auto">Create Gallery</button>';
+}
+
 if(isset($_SESSION['user_id']))
 {	
-
 	$welcomeMessage='Welcome, ' . getUserName($pdo, $_SESSION['user_id']) . '!';
 	$homepageButtons='<br><a href="user.php" class="btn btn-primary btn-rounded btn-lg mt-4">See my photos</a> <a href="uploadImage.php" class="btn btn-outline-primary btn-rounded btn-lg mt-4 text-white">Upload new photo</a>';
 
@@ -19,8 +22,10 @@ else
 ?>
 <?= echoHeader($welcomeMessage,$homepageButtons) ?>
 				
-<?= generateAlbum($pdo) ?>
+<?= album($pdo) ?>
 		
+<?= generateGallery() ?>
+
 <?= echoFooter() ?>
 
 

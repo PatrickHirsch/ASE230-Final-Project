@@ -66,6 +66,40 @@ function generateAlbum($pdo,$rootPath='.')
 	return $ret;
 }
 
+function album($pdo,$rootPath='.')
+{	
+  if (!isset($_SESSION['user_id'])) {
+    return;
+  }
+
+  $stmt=$pdo->prepare('SELECT ID FROM images WHERE owner_ID = ?');
+	$stmt->execute([$_SESSION['user_id']]);
+	$imgIds=$stmt->fetchAll();
+  print_r($imgIds);
+
+    if (count($imgIds)<1) return '<div>No images at this time</div>';
+	
+    $ret='
+        <!-- Section-->
+        <section class="py-5">
+            <div class="container px-4 px-lg-5 mt-5">
+                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                    ';
+	foreach($imgIds as $id) 
+	{	$img=getImage($pdo,$id['ID']);
+    print_r($img);
+    print_r($id);
+		if(true)//getUserObject($img['owner'])['status']!=2)	////////////////////////
+			$ret=$ret.generateAlbumSquare($pdo,$img,$rootPath,true,false);
+	}
+	$ret=$ret.'
+                </div>
+            </div>
+        </section>
+	';
+	return $ret;
+}
+
 //Builds the section where user's photos should be displayed
 function generateUserAlbum($userID,$rootPath='.')
 {	$imagesArray=importJSON($rootPath.'/data/images.json');
@@ -134,7 +168,6 @@ $ret=$ret.'('.getRating($pdo,$img['ID']).') ';
 	';
     return $ret;
 }
-
 
 
 //Selects one specific user from the JSON
@@ -337,6 +370,7 @@ function checkIfAdmin($pdo, $id)
 
 function echoErrors($textArray)
 {
+
   foreach ($textArray as $_ => $text)
   {
     echo $text;
@@ -396,6 +430,16 @@ function getGallery($pdo,$galID)
 	$ret=$stmt->fetch();
 	return $ret;
 }
+function getGalleries($pdo) 
+{
+	$stmt=$pdo->prepare('SELECT * FROM galleries');
+	$stmt->execute([]);
+  $ret = [];
+  while ($row = $stmt->fetch()) {
+    $ret[] = $row;
+  }
+	return $ret;
+}
 function updateGallery($pdo,$galID,$vis=null,$name=null,$desc=null)
 {	$pre=getGallery($pdo,$galID);
 	if($vis==null)	$vis=$pre['visibility'];
@@ -414,7 +458,7 @@ function addImgToGal($pdo,$imgID,$galID)
 }
 function getImagesFromGal($pdo,$galID)
 {	$stmt=$pdo->prepare('SELECT image_ID FROM img_in_gal WHERE gallery_ID=?');
-	$stmt->execute([$id]);
+	$stmt->execute([$galID]);
 	$ret=$stmt->fetch();
 	return $ret;
 }
@@ -427,7 +471,8 @@ function removeImgToGal($pdo,$imgID,$galID)
 
 // Returns all image IDs on the site
 function getImagesAll($pdo)
-{	$stmt=$pdo->prepare('SELECT ID FROM images');
+{
+  $stmt=$pdo->prepare('SELECT ID FROM images');
 	$stmt->execute([]);
 	$ret=$stmt->fetchAll();
 	return $ret;
