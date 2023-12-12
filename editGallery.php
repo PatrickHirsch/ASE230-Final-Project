@@ -9,14 +9,26 @@ $errors = [];
 if (!isset($_GET['id'])) {
   header('Location: index.php');
 }
-print_r($_POST);
+
+$stmt=$pdo->prepare('
+        SELECT *
+         FROM img_in_gal 
+         INNER JOIN images ON images.ID = img_in_gal.image_ID 
+         WHERE gallery_ID=?; 
+     ');
+$stmt->execute([$_GET['id']]);
+$images = $stmt->fetchAll();
 
 $gallery = getGallery($pdo, $_GET['id']);
-if ($gallery['visibility'] == '0' && $gallery['owner_ID'] != $_SESSION['user_id']) {
+if (!$gallery) {
+    header('Location: index.php');
+}
+if (($gallery['visibility'] == '0' && $gallery['owner_ID'] != $_SESSION['user_id'])) {
   header('Location: index.php');
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    print_r($_POST);
   if (count($_POST) > 0) {
     if ($_POST['action'] === 'delete') {
       deleteGallery($pdo, $_GET['id']);
@@ -36,6 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           $_POST['galleryName'],
           $_POST['description']
         );
+      }
+        foreach ($_POST['images'] as $image_id) {
+            removeImgToGal($pdo, $image_id, $_GET['id']);
       }
     }
   }  
@@ -98,8 +113,28 @@ print_r($gallery['visibility']);
                                               <textarea class="form-control" name="description" id="description" cols="30" rows="10">' . htmlspecialchars($gallery['description']) . '</textarea>
                                           </div>
                                       </div>
+                                      <div>Delete</div>
+                                      ';
 
-                                      <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
+                                  foreach ($images as $key => $image) {
+                                      echo '
+                                          <div class="form-check">
+                                            <input 
+                                            class="form-check-input" 
+                                            type="checkbox" 
+                                            name="images[]" 
+                                            value="'.$image['image_ID'].'" 
+                                            id="'.$key.'"
+                                            >
+                                          <label class="form-check-label" for="'.$key.'">
+                                            '. $image['name'] .'
+                                          </label>
+                                        </div>
+                                            ';
+
+                                  }
+
+                                echo  '<div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
                                           <button type="submit" id="update" name="action" value="update" class="btn btn-primary btn-lg">Update Gallery</button>
                                       </div>
                                       <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">

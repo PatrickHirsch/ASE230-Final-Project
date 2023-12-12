@@ -4,37 +4,72 @@ require_once('./lib/functions.php');
 require_once('./header.php');
 require_once('db/db.php');
 
-  $stmt=$pdo->prepare(
-    'SELECT ID, name, image_ID, gallery_ID 
-    FROM galleries 
+if (isset($_SESSION['user_id'])) {
+
+    $stmt=$pdo->prepare(
+        'SELECT ID, name, image_ID, gallery_ID 
+  FROM galleries 
     LEFT JOIN img_in_gal ON img_in_gal.gallery_ID = galleries.ID
     WHERE galleries.owner_ID = ?'
-  );
-	$stmt->execute([$_SESSION['user_id']]);
-  $userGalleries=$stmt->fetchAll();
+    );
+    $stmt->execute([$_SESSION['user_id']]);
+    $userGalleries=$stmt->fetchAll();
+    $uniqueIds = [];
+    $preferedImageId = [];
+    $filteredGallery = [];
 
-  // adds all gallery ids with the image
-  $img_in_gallery = [];
-  foreach ($userGalleries as $key => $gallery) {
-    if (isset($gallery['image_ID']) && isset($gallery['gallery_ID'])) {
-      $img_in_gallery[] = $gallery['ID'];
+    foreach ($userGalleries as $element) {
+        $id = $element['ID'];
+        $imageId = $element['image_ID'];
+
+        if (!in_array($id, $uniqueIds)) {
+            if ($imageId == $_GET['photoid']) {
+                $filteredGallery[] = $element;
+                $uniqueIds[] = $id;
+            } elseif (!isset($preferedImageId[$id])) {
+                $preferedImageId[$id] = $element;
+            }
+        }
     }
-  }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $galleryId = $_POST['galleries'];
+    foreach ($preferedImageId as $id => $element) {
+        if (!in_array($id, $uniqueIds)) {
+            $filteredGallery[] = $element;
+        }
+    }
 
-  // finds the difference of the galleries and post request, and post request and galleries
-  $add_to_gallery = array_diff($_POST['galleries'], $img_in_gallery);
-  $remove_from_gallery = array_diff($img_in_gallery, $_POST['galleries']);
+    function compareById($a, $b) {
+        return (int)$a['ID'] - (int)$b['ID'];
+    }
 
-  foreach ($add_to_gallery as $k => $gallery_id) {
-    addImgToGal($pdo, $_GET['photoid'], $gallery_id); 
-  }
-  foreach ($remove_from_gallery as $k => $gallery_id) {
-    removeImgToGal($pdo, $_GET['photoid'], $gallery_id); 
-  }
+    usort($filteredGallery, 'compareById');
+
+    $img_in_gallery = [];
+
+    foreach ($userGalleries as $key => $gallery) {
+        if (isset($gallery['image_ID']) && isset($gallery['gallery_ID']) && $gallery['image_ID'] == $_GET['photoid']) {
+            $img_in_gallery[] = $gallery['ID'];
+        }
+
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $galleryId = $_POST['galleries'] ?? [];
+
+        $postGalleries = $_POST['galleries'] ?? [];
+        $add_to_gallery = array_diff($postGalleries, $img_in_gallery);
+        $remove_from_gallery = array_diff($img_in_gallery, $postGalleries);
+
+
+        foreach ($remove_from_gallery as $k => $gallery_id) {
+            removeImgToGal($pdo, $_GET['photoid'], $gallery_id);
+        }
+        foreach ($add_to_gallery as $k => $gallery_id) {
+            addImgToGal($pdo, $_GET['photoid'], $gallery_id);
+        }
+    }
 }
+
 ?>
 
 
@@ -61,18 +96,18 @@ if($isError===null)
 		if($_SESSION['user_id']==$selectedImage['owner_ID'])
 			$isAuthenticatedUser=true;
   echo generateAlbumSquare($pdo,$selectedImage,'.',false,$isAuthenticatedUser);
-  $galleries = getGalleries($pdo);
+  if (isset($_SESSION['user_id'])) {
 
-  echo '<details>
+      echo '<details>
   <summary>Add to Gallery</summary>';
-  if (count($userGalleries) === 0) {
-    echo '<div>no galleries found</div>';
-    echo '<a href="createGallery.php" class="btn btn-primary btn-lg">Create Gallery</a>';
-  } else { 
-    echo '<form name="signUpForm" class="mx-1 mx-md-4" method="POST" 
+      if (count($userGalleries) === 0) {
+          echo '<div>no galleries found</div>';
+          echo '<a href="createGallery.php" class="btn btn-primary btn-lg">Create Gallery</a>';
+      } else {
+          echo '<form name="signUpForm" class="mx-1 mx-md-4" method="POST" 
       action="' . htmlspecialchars($_SERVER['PHP_SELF']) . '?photoid=' . $_GET['photoid'] . '"';
-        foreach ($userGalleries as $key => $gallery) {
-      echo '
+          foreach ($filteredGallery as $key => $gallery) {
+              echo '
           <div class="form-check">
         <input 
         class="form-check-input" 
@@ -86,17 +121,20 @@ if($isError===null)
         '. $gallery['name'] .'
       </label>
     </div>
-      ';
-        } 
+        ';
 
-    echo '
+          }
+          echo '
+        <br>
       <button type="submit" class="btn btn-secondary">Submit</button>
     </form>
     ';
+      }
+
+
+      echo '</details>';
   }
 
-  
-  echo '</details>';
 } else
 {	echo echoHeader($isError);;
 }

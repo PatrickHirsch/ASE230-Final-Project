@@ -66,18 +66,17 @@ function generateAlbum($pdo,$rootPath='.')
 	return $ret;
 }
 
-function album($pdo,$rootPath='.')
-{	
-  if (!isset($_SESSION['user_id'])) {
-    return;
-  }
-
-  $stmt=$pdo->prepare('SELECT ID FROM images WHERE owner_ID = ?');
-	$stmt->execute([$_SESSION['user_id']]);
-	$imgIds=$stmt->fetchAll();
-  print_r($imgIds);
-
-    if (count($imgIds)<1) return '<div>No images at this time</div>';
+function generateGallery($pdo, $id, $rootPath='.')
+{
+    $stmt=$pdo->prepare('
+        SELECT *
+         FROM img_in_gal 
+         INNER JOIN images ON images.ID = img_in_gal.image_ID 
+         WHERE gallery_ID=?; 
+     ');
+    $stmt->execute([$id]);
+    $gallery = $stmt->fetchAll();
+    if (count($gallery)<1) return '<div>No images at this time</div>';
 	
     $ret='
         <!-- Section-->
@@ -85,19 +84,93 @@ function album($pdo,$rootPath='.')
             <div class="container px-4 px-lg-5 mt-5">
                 <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                     ';
-	foreach($imgIds as $id) 
-	{	$img=getImage($pdo,$id['ID']);
-    print_r($img);
-    print_r($id);
-		if(true)//getUserObject($img['owner'])['status']!=2)	////////////////////////
-			$ret=$ret.generateAlbumSquare($pdo,$img,$rootPath,true,false);
+	foreach($gallery as $img)
+	{
+       $ret .= generateAlbumSquare($pdo, $img);
+
 	}
 	$ret=$ret.'
                 </div>
             </div>
         </section>
 	';
+    $owner_gallery = getGallery($pdo, $id);
+    $isAuthenticatedUser=false;
+    if(isset($_SESSION['user_id'])) {
+        if($_SESSION['user_id'] == $owner_gallery['owner_ID']) {
+            $isAuthenticatedUser = true;
+        }
+    }
+    print_r($owner_gallery);
+    if ($isAuthenticatedUser) {
+        $ret .= '<div class="d-flex justify-content-center">';
+        $ret .= '<a class="btn btn-outline-dark mt-auto" href="editGallery.php?id=' . $owner_gallery['ID'] . '">Edit Gallery</a>';
+        $ret .= '</div>';
+    }
 	return $ret;
+}
+
+function getUserGalleries($pdo, $id, $rootPath='.')
+{
+    $galleries = getGalleriesById($pdo, $id);
+
+    $isAuthenticatedUser=false;
+    if(isset($_SESSION['user_id']))
+        if($_SESSION['user_id']==$id)
+            $isAuthenticatedUser=true;
+
+    $ret='
+        <!-- Section-->
+        <section class="py-5">
+            <div class="container px-4 px-lg-5 mt-5">
+                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                    ';
+    foreach($galleries as $gallery)
+    {
+        $ret .= generateGallerySquare($gallery, $isAuthenticatedUser);
+
+    }
+    $ret=$ret.'
+                </div>
+            </div>
+        </section>
+	';
+    if ($isAuthenticatedUser) {
+        $ret .= '<a href="createGallery.php" class="btn btn-outline-dark mt-auto">Create Gallery</a>';
+    }
+    return $ret;
+}
+
+function generateGallerySquare($gallery, $isAuthenticated) {
+    $ret='
+                    <div class="col mb-5">
+                        <div class="card h-100">
+                            <!-- Sale badge-->
+                            <!-- div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div -->
+                            <!-- Product image-->
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder">'.$gallery['name'].'</h5>
+                                    <!-- Product reviews-->
+                                    <p>'.$gallery['description'].'</p>
+                                    <div class="d-flex justify-content-center small text-warning mb-2">';
+    $ret .= '</div>
+                                    <!-- Product price-->
+                                    <a class="btn btn-outline-dark mt-auto"href="gallery.php?gallery_id='.$gallery['ID'].'">View Gallery</a>';
+                                if ($isAuthenticated) {
+                                    $ret .= '<br><a class="text-muted" href="editGallery.php?id='.$gallery['ID'].'">Edit Gallery</a>';
+                                }
+                               $ret .= '</div>
+                            </div>
+                            <!-- Product actions-->
+                            ';
+    $ret .= '
+                        </div>
+                    </div>
+    ';
+    return $ret;
 }
 
 //Builds the section where user's photos should be displayed
@@ -129,7 +202,8 @@ function generateUserAlbum($userID,$rootPath='.')
 
 //Builds individual cards for each image associated with a user
 function generateAlbumSquare($pdo,$img,$rootPath='.', $viewImageButton=true,$deleteImageButton=false)
-{	if(isset($_SESSION['user_id'])&&($img['owner_ID']==$_SESSION['user_id'])) $deleteImageButton=true;
+{
+    if(isset($_SESSION['user_id'])&&($img['owner_ID']==$_SESSION['user_id'])) $deleteImageButton=true;
 	else $deleteImageButton=false;
     $ret='
                     <div class="col mb-5">
@@ -370,7 +444,6 @@ function checkIfAdmin($pdo, $id)
 
 function echoErrors($textArray)
 {
-
   foreach ($textArray as $_ => $text)
   {
     echo $text;
@@ -430,10 +503,10 @@ function getGallery($pdo,$galID)
 	$ret=$stmt->fetch();
 	return $ret;
 }
-function getGalleries($pdo) 
+function getGalleriesById($pdo, $owner_id) 
 {
-	$stmt=$pdo->prepare('SELECT * FROM galleries');
-	$stmt->execute([]);
+	$stmt=$pdo->prepare('SELECT * FROM galleries WHERE owner_ID = ?');
+	$stmt->execute([$owner_id]);
   $ret = [];
   while ($row = $stmt->fetch()) {
     $ret[] = $row;
@@ -458,7 +531,7 @@ function addImgToGal($pdo,$imgID,$galID)
 }
 function getImagesFromGal($pdo,$galID)
 {	$stmt=$pdo->prepare('SELECT image_ID FROM img_in_gal WHERE gallery_ID=?');
-	$stmt->execute([$galID]);
+	$stmt->execute([$id]);
 	$ret=$stmt->fetch();
 	return $ret;
 }
