@@ -101,7 +101,6 @@ function generateGallery($pdo, $id, $rootPath='.')
             $isAuthenticatedUser = true;
         }
     }
-    print_r($owner_gallery);
     if ($isAuthenticatedUser) {
         $ret .= '<div class="d-flex justify-content-center">';
         $ret .= '<a class="btn btn-outline-dark mt-auto" href="editGallery.php?id=' . $owner_gallery['ID'] . '">Edit Gallery</a>';
@@ -522,8 +521,11 @@ function updateGallery($pdo,$galID,$vis=null,$name=null,$desc=null)
 	$stmt->execute([$vis,$name,$desc,$galID]);
 }
 function deleteGallery($pdo,$galID)
-{	$stmt=$pdo->prepare('DELETE FROM galleries WHERE id=?');
+{
+    $stmt=$pdo->prepare('DELETE FROM img_in_gal WHERE gallery_ID = ? ');
 	$stmt->execute([$galID]);
+    $stmt=$pdo->prepare('DELETE FROM galleries WHERE ID = ?');
+    $stmt->execute([$galID]);
 }
 function addImgToGal($pdo,$imgID,$galID)
 {	$stmt=$pdo->prepare('INSERT INTO img_in_gal (image_id,gallery_ID) VALUES (?,?);');

@@ -28,7 +28,6 @@ if (($gallery['visibility'] == '0' && $gallery['owner_ID'] != $_SESSION['user_id
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    print_r($_POST);
   if (count($_POST) > 0) {
     if ($_POST['action'] === 'delete') {
       deleteGallery($pdo, $_GET['id']);
@@ -56,7 +55,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }  
 }
 
-print_r($gallery['visibility']);
 ?>
 <?= echoHeader('Update Gallery') ?>
 <head>
