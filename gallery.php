@@ -19,5 +19,3 @@ $gallery = getGallery($pdo, $_GET['gallery_id']);
 
 
 <?= echoFooter() ?>
-
-

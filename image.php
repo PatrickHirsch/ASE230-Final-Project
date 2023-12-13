@@ -12,6 +12,10 @@ if (isset($_SESSION['user_id'])) {
     LEFT JOIN img_in_gal ON img_in_gal.gallery_ID = galleries.ID
     WHERE galleries.owner_ID = ?'
     );
+	$InsertStmt = $pdo ->prepare('INSERT INTO comments (ID, user_ID, image_ID,message,timestamp) VALUES (?, ?, ?,?,?)');
+	$isError=null;
+
+	
     $stmt->execute([$_SESSION['user_id']]);
     $userGalleries=$stmt->fetchAll();
     $uniqueIds = [];
@@ -53,29 +57,6 @@ if (isset($_SESSION['user_id'])) {
 
     }
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $galleryId = $_POST['galleries'] ?? [];
-
-        $postGalleries = $_POST['galleries'] ?? [];
-        $add_to_gallery = array_diff($postGalleries, $img_in_gallery);
-        $remove_from_gallery = array_diff($img_in_gallery, $postGalleries);
-
-
-        foreach ($remove_from_gallery as $k => $gallery_id) {
-            removeImgToGal($pdo, $_GET['photoid'], $gallery_id);
-        }
-        foreach ($add_to_gallery as $k => $gallery_id) {
-            addImgToGal($pdo, $_GET['photoid'], $gallery_id);
-        }
-    }
-}
-
-?>
-
-
-<?php
-
-
 
 $isError=null;
 
@@ -88,6 +69,48 @@ else
 }
 
 
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST')
+	{
+		// Check if the form field 'message' is set and not empty
+		if (isset($_POST['message']) /*&& !empty($_POST['commentTextarea'])*/)
+		{	// Retrieve data from form submission
+			$userID = $_SESSION['user_id']; 
+			$imageID = $selectedImage['ID']; 
+			$message = $_POST['message'];
+			$timestamp = date('Y-m-d H:i:s'); // Current timestamp
+	
+			// Prepare the SQL query
+			$insertStmt = $pdo->prepare("INSERT INTO comments (user_id, image_id, message, timestamp ) VALUES (?, ?, ?, ?)");
+	
+			// Execute the query with provided values
+			$insertStmt->execute([$userID, $imageID, $message, $timestamp]);
+	
+			header("");
+		}
+		else if(isset($_POST['galleries']))
+		{	$galleryId = $_POST['galleries'] ?? [];
+	
+			$postGalleries = $_POST['galleries'] ?? [];
+			$add_to_gallery = array_diff($postGalleries, $img_in_gallery);
+			$remove_from_gallery = array_diff($img_in_gallery, $postGalleries);
+	
+	
+			foreach ($remove_from_gallery as $k => $gallery_id) {
+				removeImgToGal($pdo, $_GET['photoid'], $gallery_id);
+			}
+			foreach ($add_to_gallery as $k => $gallery_id) {
+				addImgToGal($pdo, $_GET['photoid'], $gallery_id);
+			}
+		}
+		else{}
+}
+}
+
+?>
+
+
+<?php
 if($isError===null)
 {	echo echoHeader('Selected Photo: ' . $selectedImage['name']);
 
@@ -134,6 +157,10 @@ if($isError===null)
 
       echo '</details>';
   }
+  
+	//call function to generate form allowing users to post comments.
+	echo commentSectionForm($pdo, $selectedImage, $isAuthenticatedUser);
+	echo generateCommentSection($pdo, $selectedImage);
 
 } else
 {	echo echoHeader($isError);;

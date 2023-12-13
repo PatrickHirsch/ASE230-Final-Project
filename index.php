@@ -4,6 +4,8 @@ session_start();
 require_once 'header.php';
 require_once 'lib/functions.php';
 require_once './db/db.php';
+//displays Any Session Messages
+//if ($_SESSION['success_message'] !== null){displaySessionMessage();}
 
 if(isset($_SESSION['user_id']))
 {	
@@ -18,7 +20,7 @@ else
 }
 ?>
 <?= echoHeader($welcomeMessage,$homepageButtons) ?>
-				
+		
 <?= generateAlbum($pdo) ?>
 		
 <?= echoFooter() ?>
