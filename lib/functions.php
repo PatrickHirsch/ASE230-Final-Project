@@ -66,31 +66,135 @@ function generateAlbum($pdo,$rootPath='.')
 	return $ret;
 }
 
-//Builds the section where user's photos should be displayed
-function generateUserAlbum($userID,$rootPath='.')
-{	$imagesArray=importJSON($rootPath.'/data/images.json');
+function generateGallery($pdo, $id, $rootPath='.')
+{
+    $stmt=$pdo->prepare('
+        SELECT *
+         FROM img_in_gal 
+         INNER JOIN images ON images.ID = img_in_gal.image_ID 
+         WHERE gallery_ID=?; 
+     ');
+    $stmt->execute([$id]);
+    $gallery = $stmt->fetchAll();
+    if (count($gallery)<1) return '<div>No images at this time</div>';
 	
-	$isAuthenticatedUser=false;
-	if(isset($_SESSION['user_id']))
-		if($_SESSION['user_id']==$userID)
-			$isAuthenticatedUser=true;
-	
-	$ret='
+    $ret='
         <!-- Section-->
         <section class="py-5">
             <div class="container px-4 px-lg-5 mt-5">
                 <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                     ';
-	foreach($imagesArray as $img) 
-		if($img['owner']==$userID)
-			$ret=$ret.generateAlbumSquare($img,$rootPath,true,$isAuthenticatedUser);
-	
+	foreach($gallery as $img)
+	{
+       $ret .= generateAlbumSquare($pdo, $img);
+
+	}
 	$ret=$ret.'
                 </div>
             </div>
         </section>
 	';
+    $owner_gallery = getGallery($pdo, $id);
+    $isAuthenticatedUser=false;
+    if(isset($_SESSION['user_id'])) {
+        if($_SESSION['user_id'] == $owner_gallery['owner_ID']) {
+            $isAuthenticatedUser = true;
+        }
+    }
+    if ($isAuthenticatedUser) {
+        $ret .= '<div class="d-flex justify-content-center">';
+        $ret .= '<a class="btn btn-outline-dark mt-auto" href="editGallery.php?id=' . $owner_gallery['ID'] . '">Edit Gallery</a>';
+        $ret .= '</div>';
+    }
+	return $ret;
+}
+
+function getUserGalleries($pdo, $id, $rootPath='.')
+{
+    $galleries = getGalleriesById($pdo, $id);
+
+    $isAuthenticatedUser=false;
+    if(isset($_SESSION['user_id']))
+        if($_SESSION['user_id']==$id)
+            $isAuthenticatedUser=true;
+
+    $ret='
+        <!-- Section-->
+        <section class="py-5">
+            <div class="container px-4 px-lg-5 mt-5">
+                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                    ';
+    foreach($galleries as $gallery)
+    {
+        $ret .= generateGallerySquare($gallery, $isAuthenticatedUser);
+
+    }
+    $ret=$ret.'
+                </div>
+            </div>
+        </section>
+	';
+    if ($isAuthenticatedUser) {
+        $ret .= '<a href="createGallery.php" class="btn btn-outline-dark mt-auto">Create Gallery</a>';
+    }
     return $ret;
+}
+
+function generateGallerySquare($gallery, $isAuthenticated) {
+    $ret='
+                    <div class="col mb-5">
+                        <div class="card h-100">
+                            <!-- Sale badge-->
+                            <!-- div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div -->
+                            <!-- Product image-->
+                            <!-- Product details-->
+                            <div class="card-body p-4">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <h5 class="fw-bolder">'.$gallery['name'].'</h5>
+                                    <!-- Product reviews-->
+                                    <p>'.$gallery['description'].'</p>
+                                    <div class="d-flex justify-content-center small text-warning mb-2">';
+    $ret .= '</div>
+                                    <!-- Product price-->
+                                    <a class="btn btn-outline-dark mt-auto"href="gallery.php?gallery_id='.$gallery['ID'].'">View Gallery</a>';
+                                if ($isAuthenticated) {
+                                    $ret .= '<br><a class="text-muted" href="editGallery.php?id='.$gallery['ID'].'">Edit Gallery</a>';
+                                }
+                               $ret .= '</div>
+                            </div>
+                            <!-- Product actions-->
+                            ';
+    $ret .= '
+                        </div>
+                    </div>
+    ';
+    return $ret;
+}
+
+//Builds the section where user's photos should be displayed
+function generateUserAlbum($pdo,$userID,$rootPath='.')
+{	$sqlResponce=getImagesFromUser($pdo,$userID);
+	
+    if (count($sqlResponce)<1) return '<div>No images at this time</div>';
+	
+    $ret='
+        <!-- Section-->
+        <section class="py-5">
+            <div class="container px-4 px-lg-5 mt-5">
+                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                    ';
+	foreach($sqlResponce as $id) 
+	{	$img=getImage($pdo,$id['ID']);
+		if(true)//getUserObject($img['owner'])['status']!=2)	////////////////////////
+			$ret=$ret.generateAlbumSquare($pdo,$img,$rootPath,true,false);
+	}
+	$ret=$ret.'
+                </div>
+            </div>
+        </section>
+	';
+	return $ret;
 }
 
 //Builds individual cards for each image associated with a user
@@ -112,7 +216,9 @@ function generateAlbumSquare($pdo,$img,$rootPath='.', $viewImageButton=true,$del
                                     <!-- Product reviews-->
                                     <div class="d-flex justify-content-center small text-warning mb-2">';
 	for($star=1;$star<=getRating($pdo,$img['ID']);$star++)	$ret=$ret.'<div class="bi-star-fill"></div>';
+	if(isset($_SESSION['user_id'])) $ret=$ret.'<a href="#" onClick="MyWindow=window.open(\'rateimage.php?photoid='.$img['ID'].'\',\'MyWindow\',\'width=600,height=300\'); return false;">';
 $ret=$ret.'('.getRating($pdo,$img['ID']).') ';
+	if(isset($_SESSION['user_id'])) $ret=$ret.'</a>';
     $ret=$ret.'</div>
                                     <!-- Product price-->
                                     <a class="text-muted" href="user.php?id='.$img['owner_ID'].'">'. getUserName($pdo,$img['owner_ID']) .'</a>
@@ -136,10 +242,16 @@ $ret=$ret.'('.getRating($pdo,$img['ID']).') ';
 }
 
 
-
 //Selects one specific user from the JSON
-function getUserObject($lookup,$field='ID')
-{	$allUsers=importJSON('data/users.json');
+function getUserObject($pdo,$id)
+{	$stmt=$pdo->prepare('SELECT * FROM users WHERE id=?');
+	$stmt->execute([$id]);
+	$ret=$stmt->fetch();
+	return $ret;
+
+
+
+	$allUsers=importJSON('data/users.json');
 	foreach($allUsers as $user)
 		if($user[$field]==$lookup)
 			return $user;
@@ -277,11 +389,14 @@ function generateAdminUserCards($pdo)
 }
 
 //generates user cards for index.php
-function generateUserCards($userData)
-{	$ret="";
+function generateUserCards($pdo)
+{	$userData=getUsersAll($pdo);
+	
+	$ret="";
 
     foreach ($userData as $user)
-	{	$status = $user['status'];
+	{	$user=getUserObject($pdo,$user['ID']);
+		$status = $user['status'];
 		$profilePhoto=getProfilePhoto($user['ID']);
 		
         if ($status == 1 || $status == 3)
@@ -343,6 +458,75 @@ function echoErrors($textArray)
   }
 }
 
+function commentSectionForm($pdo, $selectedImage, $user){
+    echo '<div>
+    <form method="POST">
+    <div class="form-group">
+    <label for="addCommentSection">Comment:</label>
+    <input type="hidden" name="photoid" value="'.$selectedImage['ID'].'">
+    <textarea class="form-control" name="message" id="commentTextarea" rows="3"></textarea>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    </div>';
+}
+
+function generateCommentSection($pdo, $selectedImage) {
+    $stmt = $pdo->prepare('SELECT * FROM comments WHERE image_id = ?');
+    $stmt->execute([$selectedImage['ID']]);
+    $thisImageComments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    if ($thisImageComments) {
+        foreach ($thisImageComments as $comment) {
+            echo '<div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">';
+            fillComment($pdo, $comment);
+            echo '</li>
+                </ul>
+            </div>';
+        }
+    }
+}
+
+function fillComment($pdo, $comment) {
+    $posterProfileImage = getProfilePhoto($comment['user_ID']);
+    $posterName = getUserName($pdo, $comment['user_ID']);
+    $commentText = $comment['message'];
+    $commentID = $comment['ID'];
+
+    echo '<div class="container">
+        <div class="media">
+            <img class="align-self-start mr-3 rounded-circle" src="' . $posterProfileImage . '" alt="Profile Image" width="10%" height="10%">
+            <div class="media-body">
+                <h5 class="mt-0">' . $posterName . '</h5>
+                <p>' . $commentText . '</p>
+            </div>';
+			if (isset($_SESSION['user_id']))
+            {	if($comment['user_ID']=== $_SESSION['user_id']){
+					echo '<div>
+					<form method="GET" action="editcomment.php">
+					<input type="hidden" name="commentid" value="' . $commentID . '">
+					<button type="submit" class="btn btn-primary">Edit Comment</button>
+					</form>
+					</div>';
+            }}
+        echo '</div>
+        <hr>
+    </div>';
+}
+
+function getComment($pdo, $id)
+{
+        $stmt =$pdo->prepare("SELECT *  FROM comments WHERE ID = ?");
+        $stmt->execute([$id]);
+        $comment = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    return (object) $comment ? $comment : null;
+}
+
+
 
 
 //SQL QUEREYS //////////////
@@ -374,6 +558,14 @@ function getRating($pdo,$imgID)
 	$ret=$stmt->fetch();
 	return $ret['star'];
 }
+function getUsersRating($pdo,$userID,$imgID)
+{	$ret=0;
+	$stmt=$pdo->prepare('SELECT stars FROM ratings WHERE img_ID = ? AND user_ID = ?;');
+	$stmt->execute([$imgID,$userID]);
+	$ret=$stmt->fetch();
+	if(!isset($ret['stars'])) return -1;
+	return $ret['stars'];
+}
 function leaveRating($pdo,$userID,$imgID,$stars=-1)
 {	$stmt=$pdo->prepare('DELETE FROM ratings WHERE user_ID = ? AND img_ID = ?;');
 	$stmt->execute([$userID,$imgID]);
@@ -396,6 +588,16 @@ function getGallery($pdo,$galID)
 	$ret=$stmt->fetch();
 	return $ret;
 }
+function getGalleriesById($pdo, $owner_id) 
+{
+	$stmt=$pdo->prepare('SELECT * FROM galleries WHERE owner_ID = ?');
+	$stmt->execute([$owner_id]);
+  $ret = [];
+  while ($row = $stmt->fetch()) {
+    $ret[] = $row;
+  }
+	return $ret;
+}
 function updateGallery($pdo,$galID,$vis=null,$name=null,$desc=null)
 {	$pre=getGallery($pdo,$galID);
 	if($vis==null)	$vis=$pre['visibility'];
@@ -405,8 +607,10 @@ function updateGallery($pdo,$galID,$vis=null,$name=null,$desc=null)
 	$stmt->execute([$vis,$name,$desc,$galID]);
 }
 function deleteGallery($pdo,$galID)
-{	$stmt=$pdo->prepare('DELETE FROM galleries WHERE id=?');
+{	$stmt=$pdo->prepare('DELETE FROM img_in_gal WHERE gallery_ID = ? ');
 	$stmt->execute([$galID]);
+    $stmt=$pdo->prepare('DELETE FROM galleries WHERE ID = ?');
+    $stmt->execute([$galID]);
 }
 function addImgToGal($pdo,$imgID,$galID)
 {	$stmt=$pdo->prepare('INSERT INTO img_in_gal (image_id,gallery_ID) VALUES (?,?);');
@@ -427,15 +631,21 @@ function removeImgToGal($pdo,$imgID,$galID)
 
 // Returns all image IDs on the site
 function getImagesAll($pdo)
-{	$stmt=$pdo->prepare('SELECT ID FROM images');
+{	$stmt=$pdo->prepare('SELECT ID FROM images ORDER BY timestamp DESC');
 	$stmt->execute([]);
 	$ret=$stmt->fetchAll();
 	return $ret;
 }
 function getImagesFromUser($pdo,$userID)
-{	$stmt=$pdo->prepare('SELECT * FROM images WHERE user_id=?');
-	$stmt->execute([$id]);
-	$ret=$stmt->fetch();
+{	$stmt=$pdo->prepare('SELECT ID FROM images WHERE owner_id=? ORDER BY timestamp DESC');
+	$stmt->execute([$userID]);
+	$ret=$stmt->fetchAll();
+	return $ret;
+}
+function getUsersAll($pdo)
+{	$stmt=$pdo->prepare('SELECT ID FROM users ORDER BY date_joined DESC');
+	$stmt->execute([]);
+	$ret=$stmt->fetchAll();
 	return $ret;
 }
 ?>
