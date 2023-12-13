@@ -22,6 +22,3 @@ else
 <?= generateAlbum($pdo) ?>
 		
 <?= echoFooter() ?>
-
-
-<?php 

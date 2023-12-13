@@ -31,8 +31,6 @@ else
 	header('Location: index.php');
 }
 ?>
-
-
 <?= echoHeader('Delete Image') ?>
 <head>
     <meta charset="utf-8">

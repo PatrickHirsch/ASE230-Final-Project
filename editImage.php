@@ -18,7 +18,6 @@ $updatedSuccessfully = false;
 if (count($_POST) > 0) {
     updateImage($pdo,$_GET['photoid'],$_POST['nameInput']);
     $updatedSuccessfully = true;
-	//$selectedImage=getImage($pdo,$_GET['photoid']);
 	header('Location:image.php?photoid='.$_GET['photoid']);
 }
 ?>
@@ -57,25 +56,6 @@ if (count($_POST) > 0) {
                                                 <input type="text" id="nameInput" name="nameInput" class="form-control" value="<?= $selectedImage['name'] ?>" required/>
                                             </div>
                                         </div>
-<?php
-////                                        <div class=" d-flex flex-row align-items-center mb-4">
-////                                            <i class="fas fa-user fa-lg me-3 fa-fw"></i>
-////                                            <div class="form-outline flex-fill mb-0">
-////                                                <label class="form-label" for="ratingInput">Rating</label>
-////                                                <select name="ratingInput" id="ratingInput" class="form-select">
-////                                                    <?php
-////                                                    for ($i = 0; $i <= 5; $i++) {
-////                                                        if ($selectedImage['rating'] == $i) {
-////                                                            echo '<option value="'.$i.'" selected>'.$i.'</option>';
-////                                                        } else {
-////                                                            echo '<option value="'.$i.'">'.$i.'</option>';
-////                                                        }
-////                                                    }
-////                                                    ?######>
-////                                                </select>
-////                                            </div>
-////                                        </div>
-?>
                                         <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
                                             <button type="submit" class="btn btn-primary btn-lg">Update Image</button>
                                         </div>
@@ -86,11 +66,6 @@ if (count($_POST) > 0) {
                                         <div class="btn btn-secondary btn-lg"><a href="<?= 'deleteImage.php?photoid=' . $_GET['photoid'] ?>">Delete Image</a></div>
                                     </div>
                                 </div>
-                                <?php
-                                //	<div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
-                                //	<img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp" class="img-fluid" alt="Sample image">
-                                //	</div>
-                                ?>
                             </div>
                         </div>
                     </div>
