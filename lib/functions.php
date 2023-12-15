@@ -109,9 +109,9 @@ function getUserGalleries($pdo, $id, $rootPath='.')
     $galleries = getGalleriesById($pdo, $id);
 
     $isAuthenticatedUser=false;
-    if(isset($_SESSION['user_id']))
-        if($_SESSION['user_id']==$id)
-            $isAuthenticatedUser=true;
+	$userID=-1;
+	if(isset($_SESSION['user_id'])) $userID=$_SESSION['user_id'];
+	if($userID==$id) $isAuthenticatedUser=true;
 
     $ret='
         <!-- Section-->
@@ -120,8 +120,9 @@ function getUserGalleries($pdo, $id, $rootPath='.')
                 <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                     ';
     foreach($galleries as $gallery)
-    {
-        $ret .= generateGallerySquare($gallery, $isAuthenticatedUser);
+    {	
+		if(canViewGallery($pdo,$gallery['ID'],$userID))
+			$ret .= generateGallerySquare($gallery, $isAuthenticatedUser);
 
     }
     $ret=$ret.'
@@ -565,6 +566,12 @@ function getGallery($pdo,$galID)
 	$stmt->execute([$galID]);
 	$ret=$stmt->fetch();
 	return $ret;
+}
+function canViewGallery($pdo,$galID,$userID)
+{	$thisGal=getGallery($pdo,$galID);
+	if($thisGal['visibility']==1) 		return true;
+	if($thisGal['owner_ID']==$userID)	return true;
+	return false;
 }
 function getGalleriesById($pdo, $owner_id) 
 {

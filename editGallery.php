@@ -48,9 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           $_POST['description']
         );
       }
-        foreach ($_POST['images'] as $image_id) {
-            removeImgToGal($pdo, $image_id, $_GET['id']);
-      }
+        //foreach ($_POST['images'] as $image_id) {
+            ////removeImgToGal($pdo, $image_id, $_GET['id']);
+      //}
     }
   }  
 }
