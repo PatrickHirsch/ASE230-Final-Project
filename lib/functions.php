@@ -16,11 +16,6 @@ function importJSON($filePath)
     return json_decode($contents,true);
 }
 
-function writeJSON($newArray,$filePath)
-{   $contents= json_encode($newArray, JSON_PRETTY_PRINT);
-    file_put_contents($filePath,$contents);
-}
-
 /**
  * Finds the index of a photo
  *
@@ -258,25 +253,6 @@ function getUserObject($pdo,$id)
 	return null;
 }
 
-//Gets the users name. Works with function above.
-function getImageObject($lookup,$field='ID')
-{	$allImages=importJSON('data/images.json');
-	foreach($allImages as $img)
-		if($img[$field]==$lookup)
-			return $img;
-	return null;
-}
-
-//Not sure what the difference is between this one and the one above.
-function getImageObjects($lookup,$field='owner')
-{	$allImages=importJSON('data/images.json');
-	$ret=[];
-	foreach($allImages as $img)
-		if($img[$field]==$lookup)
-			$ret[]=$img;
-	return $ret;
-}
-
 //gets users photos?
 function getUsersPhotos($userID)
 {	$allImages=importJSON('data/images.json');
@@ -325,7 +301,7 @@ function generateAdminUserCards($pdo)
       echo '<div class="col mb-5">
                       <div class="card h-100">
                           <!-- User Profile image-->
-                          <img class="card-img-top" src="' . getProfilePhoto($user['ID']) . '" alt="Image of ' . $user['name'] . '" />
+                          <img class="card-img-top" src="' . getProfilePhoto($pdo, $user['ID']) . '" alt="Image of ' . $user['name'] . '" />
                           <!-- User details-->
                           <div class="card-body p-4">
                               <div class="text-center">
@@ -365,7 +341,7 @@ function generateAdminUserCards($pdo)
         echo '<div class="col mb-5">
                         <div class="card h-100">
                             <!-- User Profile image-->
-                            <img class="card-img-top" src="' . getProfilePhoto($user['ID']) . '" alt="Image of ' . $user['name'] . '" />
+                            <img class="card-img-top" src="' . getProfilePhoto($pdo, $user['ID']) . '" alt="Image of ' . $user['name'] . '" />
                             <!-- User details-->
                             <div class="card-body p-4">
                                 <div class="text-center">
@@ -391,14 +367,14 @@ function generateAdminUserCards($pdo)
 //generates user cards for index.php
 function generateUserCards($pdo)
 {	$userData=getUsersAll($pdo);
-	
+
 	$ret="";
 
     foreach ($userData as $user)
 	{	$user=getUserObject($pdo,$user['ID']);
 		$status = $user['status'];
-		$profilePhoto=getProfilePhoto($user['ID']);
-		
+		$profilePhoto=getProfilePhoto($pdo, $user['ID']);
+
         if ($status == 1 || $status == 3)
 		{	$ret=$ret.'<div class="col mb-5">
                             <div class="card h-100">
@@ -425,10 +401,12 @@ function generateUserCards($pdo)
 	return $ret;
 }
 
-function getProfilePhoto($userID)
-{	$profilePhoto='data/profilePhotos/'.$userID;
-	if(!file_exists($profilePhoto)) $profilePhoto='data/profilePhotos/0';
-	return $profilePhoto;
+function getProfilePhoto($pdo, $userID)
+{
+    $stmt=$pdo->prepare('SELECT profile_image FROM users WHERE id=?');
+    $stmt->execute([$userID]);
+    $ret=$stmt->fetch();
+	return $ret['profile_image'] ?? 'data/profilePhotos/0';
 }
 
 //checks if a user has admin access. If user does not have admin access the are automatically logged out and session is distroyed.
@@ -491,7 +469,7 @@ function generateCommentSection($pdo, $selectedImage) {
 }
 
 function fillComment($pdo, $comment) {
-    $posterProfileImage = getProfilePhoto($comment['user_ID']);
+    $posterProfileImage = getProfilePhoto($pdo, $comment['user_ID']);
     $posterName = getUserName($pdo, $comment['user_ID']);
     $commentText = $comment['message'];
     $commentID = $comment['ID'];

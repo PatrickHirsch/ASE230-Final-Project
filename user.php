@@ -25,15 +25,25 @@ if ($thisUser == null) {
 }
 ?>
 
+<?php 
+  $userId = '';
+  if (isset($_GET['id'])) {
+    $userId = $_GET['id'];
+  } else {
+    $userId = $_SESSION['user_id'];
+  }
+?>
+
 <?= echoHeader($thisUser['name'] . '\'s Profile', $thisUser['bio']) ?>
 	
 <div class="container">
     <div class="row justify-content-center">
         <div style="width: 95%;padding: 20px;">
-            <?php if (isset($_SESSION['user_id']) && $thisUser['ID'] == $_SESSION['user_id']) : ?>
+      <?php if (isset($_SESSION['user_id']) && $thisUser['ID'] == $_SESSION['user_id']) : ?>
                 <a href="edituser.php">Edit my profile</a><br>
-                <a href="uploadImage.php">Upload a New Image</a>
+                <a href="uploadImage.php">Upload a New Image</a><br>
             <?php endif; ?>
+      <a href="gallery.php?gallery_id=<?=$userId?>">View Gallery</a>
         </div>
     </div>
     <hr>
