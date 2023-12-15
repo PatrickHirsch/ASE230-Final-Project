@@ -481,7 +481,7 @@ function fillComment($pdo, $comment) {
     $commentText = $comment['message'];
     $commentID = $comment['ID'];
 
-    $stmt = $pdo->prepare('SELECT status FROM users WHERE user_id = ?');
+    $stmt = $pdo->prepare('SELECT status FROM users WHERE ID = ?');
     $stmt->execute([$comment['user_ID']]);
     $thisCommentUserStatus = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -501,7 +501,7 @@ function fillComment($pdo, $comment) {
                 </form>
                 </div>';
             }
-            if($_SESSION['user_ID']==3){
+            if($_SESSION['user_id']==3){
                 echo '<div>
                 <form method="POST" >
                 <input type="hidden" name="commentid" value="' . $commentID . '">
