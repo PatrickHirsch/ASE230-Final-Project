@@ -43,7 +43,7 @@ if ($thisUser == null) {
                 <a href="edituser.php">Edit my profile</a><br>
                 <a href="uploadImage.php">Upload a New Image</a><br>
             <?php endif; ?>
-      <a href="gallery.php?gallery_id=<?=$userId?>">View Gallery</a>
+      <a href="galleries.php?user_id=<?=$userId?>">View Galleries</a>
         </div>
     </div>
     <hr>
