@@ -481,7 +481,12 @@ function fillComment($pdo, $comment) {
     $commentText = $comment['message'];
     $commentID = $comment['ID'];
 
-    echo '<div class="container">
+    $stmt = $pdo->prepare('SELECT status FROM users WHERE user_id = ?');
+    $stmt->execute([$comment['user_ID']]);
+    $thisCommentUserStatus = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    if($thisCommentUserStatus == 1 || 3){
+        echo '<div class="container">
         <div class="media">
             <img class="align-self-start mr-3 rounded-circle" src="' . $posterProfileImage . '" alt="Profile Image" width="10%" height="10%">
             <div class="media-body">
@@ -499,6 +504,8 @@ function fillComment($pdo, $comment) {
         echo '</div>
         <hr>
     </div>';
+    
+}
 }
 
 
