@@ -633,4 +633,9 @@ function getUsersAll($pdo)
 	$ret=$stmt->fetchAll();
 	return $ret;
 }
+function isAdmin($pdo,$userID)
+{	$status=getUserObject($pdo,$userID)['status'];
+	if($status==3) return true;
+	return false;
+}
 ?>

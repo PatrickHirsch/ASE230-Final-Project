@@ -15,6 +15,7 @@ else
 }
 
 if (isset($_SESSION['user_id'])) {
+	if(isAdmin($pdo,$_SESSION['user_id'])) echo '<a href="deleteImage.php?photoid='.$_GET['photoid'].'"><button type="submit" name="adminRemove" class="btn btn-primary">Admin Remove</button></a>';
 
     $stmt=$pdo->prepare(
         'SELECT ID, name, image_ID, gallery_ID 
