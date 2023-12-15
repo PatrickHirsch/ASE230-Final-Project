@@ -50,7 +50,7 @@ function generateAlbum($pdo,$rootPath='.')
                     ';
 	foreach($sqlResponce as $id) 
 	{	$img=getImage($pdo,$id['ID']);
-		if(true)//getUserObject($img['owner'])['status']!=2)	////////////////////////
+		if(getUserObject($pdo,$img['owner_ID'])['status']!=-1)	////////////////////////
 			$ret=$ret.generateAlbumSquare($pdo,$img,$rootPath,true,false);
 	}
 	$ret=$ret.'
@@ -457,14 +457,16 @@ function generateCommentSection($pdo, $selectedImage) {
     $thisImageComments = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     if ($thisImageComments) {
-        foreach ($thisImageComments as $comment) {
-            echo '<div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">';
-            fillComment($pdo, $comment);
-            echo '</li>
-                </ul>
-            </div>';
+        foreach ($thisImageComments as $comment) 
+		{	if(getUserObject($pdo,$comment['user_ID'])['status']!=-1)
+			{	echo '<div>
+					<ul class="list-group list-group-flush">
+						<li class="list-group-item">';
+				fillComment($pdo, $comment);
+				echo '</li>
+					</ul>
+				</div>';
+			}
         }
     }
 }
