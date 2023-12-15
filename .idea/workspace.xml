@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="c54cc694-6d7f-4150-911a-f3b9dc7bc291" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.template.php" beforeDir="false" afterPath="$PROJECT_DIR$/.template.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/adminEditUser.php" beforeDir="false" afterPath="$PROJECT_DIR$/adminEditUser.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/album.php" beforeDir="false" afterPath="$PROJECT_DIR$/album.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/favicon.ico" beforeDir="false" afterPath="$PROJECT_DIR$/assets/favicon.ico" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/createGallery.php" beforeDir="false" afterPath="$PROJECT_DIR$/createGallery.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/css/styles.css" beforeDir="false" afterPath="$PROJECT_DIR$/css/styles.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/albums.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/albums.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/images.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/images.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/images/image_657a0835f275d.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/data/images/image_657a0835f275d.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/images/image_657a08425c3ea.png" beforeDir="false" afterPath="$PROJECT_DIR$/data/images/image_657a08425c3ea.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/images/image_657a08bce7293.png" beforeDir="false" afterPath="$PROJECT_DIR$/data/images/image_657a08bce7293.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/profilePhotos/0" beforeDir="false" afterPath="$PROJECT_DIR$/data/profilePhotos/0" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/profilePhotos/5.jpeg" beforeDir="false" afterPath="$PROJECT_DIR$/data/profilePhotos/5.jpeg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/profilePhotos/5.png" beforeDir="false" afterPath="$PROJECT_DIR$/data/profilePhotos/5.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/profilePhotos/6.jpeg" beforeDir="false" afterPath="$PROJECT_DIR$/data/profilePhotos/6.jpeg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/users.json" beforeDir="false" afterPath="$PROJECT_DIR$/data/users.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/users/5/image_657252cf0e3d1.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/data/users/5/image_657252cf0e3d1.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/users/5021468291697140945/image_6528511d32d22.png" beforeDir="false" afterPath="$PROJECT_DIR$/data/users/5021468291697140945/image_6528511d32d22.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/db.php" beforeDir="false" afterPath="$PROJECT_DIR$/db/db.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/deleteImage.php" beforeDir="false" afterPath="$PROJECT_DIR$/deleteImage.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/editGallery.php" beforeDir="false" afterPath="$PROJECT_DIR$/editGallery.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/editImage.php" beforeDir="false" afterPath="$PROJECT_DIR$/editImage.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/editcomment.php" beforeDir="false" afterPath="$PROJECT_DIR$/editcomment.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edituser.php" beforeDir="false" afterPath="$PROJECT_DIR$/edituser.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/galleries.php" beforeDir="false" afterPath="$PROJECT_DIR$/galleries.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gallery.php" beforeDir="false" afterPath="$PROJECT_DIR$/gallery.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/header.php" beforeDir="false" afterPath="$PROJECT_DIR$/header.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/home.php" beforeDir="false" afterPath="$PROJECT_DIR$/home.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/image.php" beforeDir="false" afterPath="$PROJECT_DIR$/image.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/scripts.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/scripts.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/functions.php" beforeDir="false" afterPath="$PROJECT_DIR$/lib/functions.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/imageHandling.php" beforeDir="false" afterPath="$PROJECT_DIR$/lib/imageHandling.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/login.php" beforeDir="false" afterPath="$PROJECT_DIR$/login.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logout.php" beforeDir="false" afterPath="$PROJECT_DIR$/logout.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rateimage.php" beforeDir="false" afterPath="$PROJECT_DIR$/rateimage.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/removeuser.php" beforeDir="false" afterPath="$PROJECT_DIR$/removeuser.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/signup.php" beforeDir="false" afterPath="$PROJECT_DIR$/signup.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/uploadImage.php" beforeDir="false" afterPath="$PROJECT_DIR$/uploadImage.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/user.php" beforeDir="false" afterPath="$PROJECT_DIR$/user.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users.php" beforeDir="false" afterPath="$PROJECT_DIR$/users.php" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings">
+    <execution />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="/bin/php" />
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="2ZS7tPC6lW2iMSI8yVEXmQD4Zls" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "NorbergP2",
+    "last_opened_file_path": "/opt/lampp/htdocs/ASE230-Final-Project",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "reference.settingsdialog.project.grazie",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-php-predefined-ba97393d7c68-74080bdb84d3-com.jetbrains.php.sharedIndexes-PS-233.11799.232" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c54cc694-6d7f-4150-911a-f3b9dc7bc291" name="Changes" comment="" />
+      <created>1702403841109</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1702403841109</updated>
+      <workItem from="1702403842170" duration="148000" />
+      <workItem from="1702405824413" duration="14429000" />
+      <workItem from="1702441845145" duration="795000" />
+      <workItem from="1702614492339" duration="2297000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
