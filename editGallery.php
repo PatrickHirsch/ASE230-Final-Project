@@ -43,14 +43,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = 'Gallery Name and Visibility are required Fields';
       }
       else {
-        updateGallery(
+		updateGallery(
           $pdo, 
           (int)$_GET['id'], 
           $vis=($_POST['visibility'] === 'public') ? 1 : 0, 
           $name=$_POST['galleryName'],
           $desc=$_POST['description']
         );
-		$gallery=getGallery($pdo, $_GET['id']);
+		foreach ($_POST['images'] as $imgID) removeImgToGal($pdo,$imgID,$_GET['id']);
+		header('Location: gallery.php?gallery_id='.$_GET['id']);
       }
 
     }
