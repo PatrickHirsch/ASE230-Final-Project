@@ -38,6 +38,7 @@ if (count($_POST) > 0) {
 
     writeJSON($imagesJson, 'data/images.json');
     $updatedSuccessfully = true;
+	header('Location:image.php?photoid='.$_GET['photoid']);
 }
 ?>
 <?= echoHeader('Edit Image') ?>
@@ -101,11 +102,6 @@ if (count($_POST) > 0) {
                                         <div class="btn btn-secondary btn-lg"><a href="<?= 'deleteImage.php?photoid=' . $_GET['photoid'] ?>">Delete Image</a></div>
                                     </div>
                                 </div>
-                                <?php
-                                //	<div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
-                                //	<img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp" class="img-fluid" alt="Sample image">
-                                //	</div>
-                                ?>
                             </div>
                         </div>
                     </div>

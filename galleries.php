@@ -4,18 +4,16 @@ session_start();
 require_once 'header.php';
 require_once 'lib/functions.php';
 require_once './db/db.php';
-
-
-if (!isset($_GET['gallery_id'])) {
+if (!isset($_GET['user_id'])) {
     header('Location: index.php');
 }
-
-$gallery = getGallery($pdo, $_GET['gallery_id']);
+$welcomeMessage=getUserName($pdo, $_GET['user_id']) . '\'s galleries';
 
 ?>
-<?= echoHeader($gallery['name'], $gallery['description']) ?>
+<?= echoHeader($welcomeMessage) ?>
 
-<?=  generateGallery($pdo, $_GET['gallery_id']) ?>
-
+<?= getUserGalleries($pdo, $_GET['user_id']) ?>
 
 <?= echoFooter() ?>
+
+
