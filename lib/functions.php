@@ -16,11 +16,6 @@ function importJSON($filePath)
     return json_decode($contents,true);
 }
 
-function writeJSON($newArray,$filePath)
-{   $contents= json_encode($newArray, JSON_PRETTY_PRINT);
-    file_put_contents($filePath,$contents);
-}
-
 /**
  * Finds the index of a photo
  *
@@ -114,9 +109,9 @@ function getUserGalleries($pdo, $id, $rootPath='.')
     $galleries = getGalleriesById($pdo, $id);
 
     $isAuthenticatedUser=false;
-    if(isset($_SESSION['user_id']))
-        if($_SESSION['user_id']==$id)
-            $isAuthenticatedUser=true;
+	$userID=-1;
+	if(isset($_SESSION['user_id'])) $userID=$_SESSION['user_id'];
+	if($userID==$id) $isAuthenticatedUser=true;
 
     $ret='
         <!-- Section-->
@@ -125,8 +120,9 @@ function getUserGalleries($pdo, $id, $rootPath='.')
                 <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                     ';
     foreach($galleries as $gallery)
-    {
-        $ret .= generateGallerySquare($gallery, $isAuthenticatedUser);
+    {	
+		if(canViewGallery($pdo,$gallery['ID'],$userID))
+			$ret .= generateGallerySquare($gallery, $isAuthenticatedUser);
 
     }
     $ret=$ret.'
@@ -258,25 +254,6 @@ function getUserObject($pdo,$id)
 	return null;
 }
 
-//Gets the users name. Works with function above.
-function getImageObject($lookup,$field='ID')
-{	$allImages=importJSON('data/images.json');
-	foreach($allImages as $img)
-		if($img[$field]==$lookup)
-			return $img;
-	return null;
-}
-
-//Not sure what the difference is between this one and the one above.
-function getImageObjects($lookup,$field='owner')
-{	$allImages=importJSON('data/images.json');
-	$ret=[];
-	foreach($allImages as $img)
-		if($img[$field]==$lookup)
-			$ret[]=$img;
-	return $ret;
-}
-
 //gets users photos?
 function getUsersPhotos($userID)
 {	$allImages=importJSON('data/images.json');
@@ -325,7 +302,7 @@ function generateAdminUserCards($pdo)
       echo '<div class="col mb-5">
                       <div class="card h-100">
                           <!-- User Profile image-->
-                          <img class="card-img-top" src="' . getProfilePhoto($user['ID']) . '" alt="Image of ' . $user['name'] . '" />
+                          <img class="card-img-top" src="' . getProfilePhoto($pdo, $user['ID']) . '" alt="Image of ' . $user['name'] . '" />
                           <!-- User details-->
                           <div class="card-body p-4">
                               <div class="text-center">
@@ -365,7 +342,7 @@ function generateAdminUserCards($pdo)
         echo '<div class="col mb-5">
                         <div class="card h-100">
                             <!-- User Profile image-->
-                            <img class="card-img-top" src="' . getProfilePhoto($user['ID']) . '" alt="Image of ' . $user['name'] . '" />
+                            <img class="card-img-top" src="' . getProfilePhoto($pdo, $user['ID']) . '" alt="Image of ' . $user['name'] . '" />
                             <!-- User details-->
                             <div class="card-body p-4">
                                 <div class="text-center">
@@ -391,14 +368,14 @@ function generateAdminUserCards($pdo)
 //generates user cards for index.php
 function generateUserCards($pdo)
 {	$userData=getUsersAll($pdo);
-	
+
 	$ret="";
 
     foreach ($userData as $user)
 	{	$user=getUserObject($pdo,$user['ID']);
 		$status = $user['status'];
-		$profilePhoto=getProfilePhoto($user['ID']);
-		
+		$profilePhoto=getProfilePhoto($pdo, $user['ID']);
+
         if ($status == 1 || $status == 3)
 		{	$ret=$ret.'<div class="col mb-5">
                             <div class="card h-100">
@@ -425,10 +402,12 @@ function generateUserCards($pdo)
 	return $ret;
 }
 
-function getProfilePhoto($userID)
-{	$profilePhoto='data/profilePhotos/'.$userID;
-	if(!file_exists($profilePhoto)) $profilePhoto='data/profilePhotos/0';
-	return $profilePhoto;
+function getProfilePhoto($pdo, $userID)
+{
+    $stmt=$pdo->prepare('SELECT profile_image FROM users WHERE id=?');
+    $stmt->execute([$userID]);
+    $ret=$stmt->fetch();
+	return $ret['profile_image'] ?? 'data/profilePhotos/0';
 }
 
 //checks if a user has admin access. If user does not have admin access the are automatically logged out and session is distroyed.
@@ -491,7 +470,7 @@ function generateCommentSection($pdo, $selectedImage) {
 }
 
 function fillComment($pdo, $comment) {
-    $posterProfileImage = getProfilePhoto($comment['user_ID']);
+    $posterProfileImage = getProfilePhoto($pdo, $comment['user_ID']);
     $posterName = getUserName($pdo, $comment['user_ID']);
     $commentText = $comment['message'];
     $commentID = $comment['ID'];
@@ -504,14 +483,23 @@ function fillComment($pdo, $comment) {
                 <p>' . $commentText . '</p>
             </div>';
 			if (isset($_SESSION['user_id']))
-            {	if($comment['user_ID']=== $_SESSION['user_id']){
-					echo '<div>
+            {	if($comment['user_ID']=== $_SESSION['user_id'])
+				{	echo '<div>
 					<form method="GET" action="editcomment.php">
 					<input type="hidden" name="commentid" value="' . $commentID . '">
 					<button type="submit" class="btn btn-primary">Edit Comment</button>
 					</form>
 					</div>';
-            }}
+				}
+				if(isAdmin($pdo,$_SESSION['user_id']))
+				{	echo '<div>
+					<form method="POST" action="editcomment.php?commentid='.$commentID.'">
+					<input type="hidden" name="delete">
+					<button type="submit" class="btn btn-primary">Admin Delete</button>
+					</form>
+					</div>';
+				}
+			}
         echo '</div>
         <hr>
     </div>';
@@ -588,6 +576,12 @@ function getGallery($pdo,$galID)
 	$ret=$stmt->fetch();
 	return $ret;
 }
+function canViewGallery($pdo,$galID,$userID)
+{	$thisGal=getGallery($pdo,$galID);
+	if($thisGal['visibility']==1) 		return true;
+	if($thisGal['owner_ID']==$userID)	return true;
+	return false;
+}
 function getGalleriesById($pdo, $owner_id) 
 {
 	$stmt=$pdo->prepare('SELECT * FROM galleries WHERE owner_ID = ?');
@@ -598,12 +592,12 @@ function getGalleriesById($pdo, $owner_id)
   }
 	return $ret;
 }
-function updateGallery($pdo,$galID,$vis=null,$name=null,$desc=null)
+function updateGallery($pdo,$galID,$vis=-1,$name=null,$desc=null)
 {	$pre=getGallery($pdo,$galID);
-	if($vis==null)	$vis=$pre['visibility'];
+	if($vis==-1)	$vis=$pre['visibility'];
 	if($name==null)	$name=$pre['name'];
 	if($desc==null)	$desc=$pre['description'];
-	$stmt=$pdo->prepare('UPDATE galleries SET visibility = ?, name=?, description=? WHERE ID = ?');
+	$stmt=$pdo->prepare('UPDATE galleries SET visibility=?, name=?, description=? WHERE ID=?');
 	$stmt->execute([$vis,$name,$desc,$galID]);
 }
 function deleteGallery($pdo,$galID)
@@ -647,5 +641,10 @@ function getUsersAll($pdo)
 	$stmt->execute([]);
 	$ret=$stmt->fetchAll();
 	return $ret;
+}
+function isAdmin($pdo,$userID)
+{	$status=getUserObject($pdo,$userID)['status'];
+	if($status==3) return true;
+	return false;
 }
 ?>

@@ -4,11 +4,18 @@ require_once 'header.php';
 require_once 'lib/functions.php';
 require_once 'db/db.php';
 
-
 $errors = [];
 if (!isset($_GET['id'])) {
   header('Location: index.php');
 }
+
+if(!isset($_SESSION['user_id'])) header('Location: index.php');
+$gallery = getGallery($pdo, $_GET['id']);
+if(!$gallery) header('Location: index.php');
+if($gallery['owner_ID']!=$_SESSION['user_id']) header('Location: index.php');
+
+
+
 
 $stmt=$pdo->prepare('
         SELECT *
@@ -19,10 +26,6 @@ $stmt=$pdo->prepare('
 $stmt->execute([$_GET['id']]);
 $images = $stmt->fetchAll();
 
-$gallery = getGallery($pdo, $_GET['id']);
-if (!$gallery) {
-    header('Location: index.php');
-}
 if (($gallery['visibility'] == '0' && $gallery['owner_ID'] != $_SESSION['user_id'])) {
   header('Location: index.php');
 }
@@ -40,17 +43,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = 'Gallery Name and Visibility are required Fields';
       }
       else {
-        updateGallery(
+		updateGallery(
           $pdo, 
-          $_GET['id'], 
-          ($_POST['visibility'] === 'public') ? 1 : 0, 
-          $_POST['galleryName'],
-          $_POST['description']
+          (int)$_GET['id'], 
+          $vis=($_POST['visibility'] === 'public') ? 1 : 0, 
+          $name=$_POST['galleryName'],
+          $desc=$_POST['description']
         );
+		foreach ($_POST['images'] as $imgID) removeImgToGal($pdo,$imgID,$_GET['id']);
+		header('Location: gallery.php?gallery_id='.$_GET['id']);
       }
-        foreach ($_POST['images'] as $image_id) {
-            removeImgToGal($pdo, $image_id, $_GET['id']);
-      }
+
     }
   }  
 }

@@ -18,7 +18,6 @@ else if (isset($_SESSION['user_id'])) {
 if ($thisUser == null)
     header("Location: index.php");
 
-$theseImages = getUsersPhotos($thisUser['ID']);
 
 //Process Admin User Ban
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -62,7 +61,7 @@ switch ($status) {
 }
 ?>
 <!-- Admin Navigation-->
-<div class="d-flex flex-column">
+<div class="d-flex flex-row justify-content-between">
     <div class="d-flex justify-content-start">
         <form method="POST" action="">
 
@@ -78,7 +77,7 @@ switch ($status) {
             ?>
         </form>
     </div>
-    <div class="d-flex justify-content-end">
+    <div class="d-flex justify-content-end w-25 align-self-end align-items-end">
         <a href="admin.php"><button name="toIndex" type="submit">Back to Admin Dashboard</button></a>
     </div>
 </div>
@@ -90,8 +89,5 @@ switch ($status) {
 <hr>
 <?= generateUserAlbum($pdo,$thisUser['ID']); ?>
 
-<!-- pre><?= print_r($theseImages); ?></pre>
-<pre><?= print_r($thisUser); ?></pre>
-<pre><?= print_r($_SESSION); ?></pre-->
 
 <?= echoFooter() ?>

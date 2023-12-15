@@ -4,7 +4,18 @@ require_once('./lib/functions.php');
 require_once('./header.php');
 require_once('db/db.php');
 
+$isError=null;
+
+if(!isset($_GET['photoid']))
+{	$isError='the photo id is invalid';
+}
+else
+{	$selectedImage=getImage($pdo,$_GET['photoid']);
+	if(!$selectedImage) $isError='photo couldn\'t be found';
+}
+
 if (isset($_SESSION['user_id'])) {
+	if(isAdmin($pdo,$_SESSION['user_id'])) echo '<a href="deleteImage.php?photoid='.$_GET['photoid'].'"><button type="submit" name="adminRemove" class="btn btn-primary">Admin Remove</button></a>';
 
     $stmt=$pdo->prepare(
         'SELECT ID, name, image_ID, gallery_ID 
@@ -58,15 +69,6 @@ if (isset($_SESSION['user_id'])) {
     }
 
 
-$isError=null;
-
-if(!isset($_GET['photoid']))
-{	$isError='the photo id is invalid';
-}
-else
-{	$selectedImage=getImage($pdo,$_GET['photoid']);
-	if(!$selectedImage) $isError='photo couldn\'t be found';
-}
 
 
 

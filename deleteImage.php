@@ -14,7 +14,7 @@ if(!(isset($_GET['photoid'])&&isset($_SESSION['user_id'])))
 else
 {	$selectedImage=getImage($pdo,$_GET['photoid']);
 	if(!$selectedImage) $isError='photo could not be found';
-	elseif($selectedImage['owner_ID']!=$_SESSION['user_id']) $isError='You are not authorized to view this page';
+	elseif(($selectedImage['owner_ID']!=$_SESSION['user_id'])&&!isAdmin($pdo,$_SESSION['user_id'])) $isError='You are not authorized to view this page';
 }
 
 if($isError===null)
