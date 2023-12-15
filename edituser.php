@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                             <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                                             <div class="form-outline flex-fill mb-0">
                                                 <label class="form-label" for="profilePhoto">Profile Photo</label>
-                                                <br><img src="<?= getProfilePhoto($pdo, $_SESSION['user_id']) ?>"
+                                                <br><img src="<?= getProfilePhoto($pdo, $_SESSION['user_id']) ?>" >
                                                 <input type="file" id="profilePhoto" name="profilePhoto"
                                                     class="form-control" />
                                             </div>
