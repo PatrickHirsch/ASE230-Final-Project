@@ -583,12 +583,12 @@ function getGalleriesById($pdo, $owner_id)
   }
 	return $ret;
 }
-function updateGallery($pdo,$galID,$vis=null,$name=null,$desc=null)
+function updateGallery($pdo,$galID,$vis=-1,$name=null,$desc=null)
 {	$pre=getGallery($pdo,$galID);
-	if($vis==null)	$vis=$pre['visibility'];
+	if($vis==-1)	$vis=$pre['visibility'];
 	if($name==null)	$name=$pre['name'];
 	if($desc==null)	$desc=$pre['description'];
-	$stmt=$pdo->prepare('UPDATE galleries SET visibility = ?, name=?, description=? WHERE ID = ?');
+	$stmt=$pdo->prepare('UPDATE galleries SET visibility=?, name=?, description=? WHERE ID=?');
 	$stmt->execute([$vis,$name,$desc,$galID]);
 }
 function deleteGallery($pdo,$galID)
