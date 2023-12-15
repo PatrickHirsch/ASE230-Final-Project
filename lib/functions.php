@@ -483,14 +483,23 @@ function fillComment($pdo, $comment) {
                 <p>' . $commentText . '</p>
             </div>';
 			if (isset($_SESSION['user_id']))
-            {	if($comment['user_ID']=== $_SESSION['user_id']){
-					echo '<div>
+            {	if($comment['user_ID']=== $_SESSION['user_id'])
+				{	echo '<div>
 					<form method="GET" action="editcomment.php">
 					<input type="hidden" name="commentid" value="' . $commentID . '">
 					<button type="submit" class="btn btn-primary">Edit Comment</button>
 					</form>
 					</div>';
-            }}
+				}
+				if(isAdmin($pdo,$_SESSION['user_id']))
+				{	echo '<div>
+					<form method="POST" action="editcomment.php?commentid='.$commentID.'">
+					<input type="hidden" name="delete">
+					<button type="submit" class="btn btn-primary">Admin Delete</button>
+					</form>
+					</div>';
+				}
+			}
         echo '</div>
         <hr>
     </div>';
