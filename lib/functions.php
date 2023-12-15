@@ -501,6 +501,15 @@ function fillComment($pdo, $comment) {
                 </form>
                 </div>';
             }
+            if($_SESSION['user_ID']==3){
+                echo '<div>
+                <form method="POST" >
+                <input type="hidden" name="commentid" value="' . $commentID . '">
+                <button type="submit" name="adminRemoveComment" class="btn btn-primary">Remove Comment</button>
+                </form>
+                </div>';
+            }
+
         echo '</div>
         <hr>
     </div>';

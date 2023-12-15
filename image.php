@@ -9,7 +9,11 @@ displaySessionMessage();
 
 if (isset($_SESSION['user_id'])) {
     if ($_SESSION['user_id'] == 3) {
-        echo '<button type="submit" name="adminRemove" class="btn btn-primary">Submit</button>';
+        echo '
+        <form method="POST">
+        <input type="hidden" name="imageId" value="' . $imageId . '">
+        <button type="submit" name="adminRemove" class="btn btn-primary">Submit</button>
+        </form>';
     }
 
     $stmt = $pdo->prepare(
@@ -80,6 +84,16 @@ if (isset($_SESSION['user_id'])) {
 
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        //admin remove comment
+        if(isset($_POST['adminRemoveComment'])){
+            $adminMessage='Comment Removed By Admin';
+            $timestamp = date('Y-m-d H:i:s'); // Current timestamp
+            $updateStmt= $pdo->prepare("UPDATE comments SET user_ID = ?, message = ?, timestamp = ? WHERE ID = ?");
+            $updateStmt->execute([0, $adminMessage, $timestamp, $_POST['comment_id']]);
+
+            $_SESSION['success_message'] = "Comment removed successfully!";
+        }
+
         //admin remove image
         if (isset($_POST['adminRemove'])) {
             // Prepare and execute the query to delete the comment
@@ -88,7 +102,7 @@ if (isset($_SESSION['user_id'])) {
             $commentStmt= $pdo->prepare("DELETE FROM comments WHERE image_ID=?");
             $commentStmt -> execute([$imageId]);
 
-            $_SESSION['message'] = 'Image was removed from database';
+            $_SESSION['success_message'] = 'Image was removed from database';
         }
 
         // Check if the form field 'message' is set and not empty
