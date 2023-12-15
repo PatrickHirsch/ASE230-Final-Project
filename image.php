@@ -4,6 +4,16 @@ require_once('./lib/functions.php');
 require_once('./header.php');
 require_once('db/db.php');
 
+$isError=null;
+
+if(!isset($_GET['photoid']))
+{	$isError='the photo id is invalid';
+}
+else
+{	$selectedImage=getImage($pdo,$_GET['photoid']);
+	if(!$selectedImage) $isError='photo couldn\'t be found';
+}
+
 if (isset($_SESSION['user_id'])) {
 
     $stmt=$pdo->prepare(
@@ -58,15 +68,6 @@ if (isset($_SESSION['user_id'])) {
     }
 
 
-$isError=null;
-
-if(!isset($_GET['photoid']))
-{	$isError='the photo id is invalid';
-}
-else
-{	$selectedImage=getImage($pdo,$_GET['photoid']);
-	if(!$selectedImage) $isError='photo couldn\'t be found';
-}
 
 
 
