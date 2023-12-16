@@ -11,4 +11,4 @@
 - There is one admin account with password `1` and username `CaporussoN1@nku.edu`
 - There is one banned user with password `1` and username `MunozA2@nku.edu`
 
-[Project Presentation]()
+[Project Presentation](https://youtu.be/bc6cFMs4VFA)
